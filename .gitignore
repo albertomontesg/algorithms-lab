@@ -25,5 +25,14 @@
 
 # Executables
 *.exe
-*.out
 *.app
+bin/
+
+# MacOS
+.DS_Store
+
+# Tests
+*.tmp
+
+# Debug
+*.dSYM

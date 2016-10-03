@@ -1,6 +1,6 @@
 /*
-Implementation that first find the first interval that contains all the words. Then slide this
-interval along the words and try to reduce if possible to find the minimum.
+Implementation searching for each start position all the intervals that contains all the words.
+Is not at all efficient.
 */
 
 #include <vector>
@@ -11,21 +11,31 @@ interval along the words and try to reduce if possible to find the minimum.
 
 using namespace std;
 
+bool at_least_one(vector<long> &a) {
+    bool response = true;
+    for (auto elem: a) {
+        if (elem == 0) {
+            response = false;
+        }
+    }
+    return response;
+}
 
 void search_snippets() {
     int n; cin >> n;
 
     vector<long> word_occurrences(n);
     for (int i = 0; i < n; i++) {
-        cin >> word_occurrences[i];
+        long occ; cin >> occ;
+        word_occurrences[i] = occ;
     }
 
-    vector<pair<long, long> > word_appearance(65536);
+    vector<pair<long, long> > word_appearance(0);
     long count = 0;
     for (long i = 0; i < n; i++) {
         for (int j = 0; j < word_occurrences[i]; j++) {
             long position; cin >> position;
-            word_appearance[count] = pair<long, long>(position, i);
+            word_appearance.push_back(pair<long, long>(position, i));
             count++;
         }
     }
@@ -35,25 +45,21 @@ void search_snippets() {
     });
 
     vector<long> appearance(n, 0);
+    long min_distance = LONG_MAX;
     long start = 0, end = 0;
     appearance[word_appearance[0].second]++;
-    while ( *min_element(appearance.begin(), appearance.end()) != 1 && end < count - 1) {
-        appearance[word_appearance[++end].second]++;
-    }
-    while ( appearance[word_appearance[start].second] > 1) {
-        appearance[word_appearance[start++].second]--;
-    }
-    long min_distance = word_appearance[end].first - word_appearance[start].first;
-
-    while (end < count - 1) {
-        appearance[word_appearance[start++].second]--;
-        appearance[word_appearance[++end].second]++;
-        while (appearance[word_appearance[start].second] > 1 && *min_element(appearance.begin(), appearance.end()) >= 1) {
+    while (start < count) {
+        while ( !at_least_one(appearance) && end < count - 1) {
+            appearance[word_appearance[++end].second]++;
+        }
+        while ( appearance[word_appearance[start].second] > 1) {
             appearance[word_appearance[start++].second]--;
         }
         long distance = word_appearance[end].first - word_appearance[start].first;
-        if (*min_element(appearance.begin(), appearance.end()) >= 1)
+        if ( at_least_one(appearance) )
             min_distance = min(distance, min_distance);
+        appearance[word_appearance[start].second]--;
+        start++;
     }
 
     cout << min_distance + 1 << endl;

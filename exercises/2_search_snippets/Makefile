@@ -25,3 +25,9 @@ test:
 		diff $$output $${output%.out}.in.tmp ; \
 	done
 	rm testsets/*.in.tmp
+
+time:
+	for input in testsets/*.in ; do \
+		time ./bin/$(NAME) < $$input > $$input.tmp ; \
+	done
+	rm testsets/*.in.tmp

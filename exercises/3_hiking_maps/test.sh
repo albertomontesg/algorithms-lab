@@ -1,4 +1,4 @@
-NAME=antenna
+NAME=hiking_maps
 
 echo "Running tests"
 for input in testsets/*.in ; do
@@ -9,4 +9,4 @@ for output in testsets/*.out ; do
     echo $output
     diff $output ${output%.out}.in.tmp ;
 done
-rm testsets/*.in.tmp
+#rm testsets/*.in.tmp

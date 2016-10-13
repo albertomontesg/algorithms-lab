@@ -38,26 +38,21 @@ void search_snippets() {
         }
     }
 
-    long l_w = distance(wo.begin(), max_element(wo.begin(), wo.end()));
+    vector<vector<long>::iterator> it(n);
+    for (int i = 0; i < n; i++) { it[i] = wq[i].begin(); }
+
     long min_distance = LONG_MAX;
-
-    for (int i = 0; i < wo[l_w]; i++) {
-        long v = wq[l_w][i];
-        long min_upper = LONG_MAX, max_lower = 0;
-
-        for (int j = 0; j < n; j++) {
-            if (j == l_w) continue;
-            auto min_p = upper_bound(wq[j].begin(), wq[j].end(), v);
-            if (min_p != wq[j].end()) min_upper = min(min_upper, *min_p);
-            auto max_p = upper_bound(wq[j].begin(), wq[j].end(), v, greater<long>());
-            if (max_p != wq[j].end()) max_lower = min(max_lower, *max_p);
-        }
-
-        if ( min_upper == LONG_MAX ) min_upper = v;
-        if ( max_lower == 0) max_lower = v;
-
-        long d = min_upper - max_lower + 1;
-        min_distance = min(min_distance, d);
+    while ( not_at_end(wq, it) ) {
+        struct {
+            bool operator()(vector<long>::iterator a, vector<long>::iterator b) {
+                return *a < *b;
+            }
+        } Cmp;
+        auto min_p = distance(it.begin(), min_element(it.begin(), it.end(), Cmp));
+        auto max_p = distance(it.begin(), max_element(it.begin(), it.end(), Cmp));
+        long d = *(it[max_p]) - *(it[min_p]) + 1;
+        min_distance = min(d, min_distance);
+        it[min_p]++;
     }
 
     cout << min_distance << endl;

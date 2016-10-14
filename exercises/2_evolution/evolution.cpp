@@ -1,4 +1,5 @@
 #include <vector>
+#include <map>
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -10,53 +11,46 @@ void evolution() {
     int n; cin >> n;
     int q; cin >> q;
 
-    vector<string> species_name(n);
-    vector<long> species_age(n);
-    map<string, int> species_keys;
+    // Store the names and respective ages
+    map<string, int> species_age;
+    map<string, string> species_relations;
     for (int i = 0; i < n; i++) {
-        cin >> species_name[i];
-        cin >> species_age[i];
-        species_keys[species_name[i]] = i;
+        string key; cin >> key;
+        int age; cin >> age;
+        species_age[key] = age;
+        species_relations[key] = "";
     }
 
-    // Store the adjecency matrix
-    vector<int> relations(n, -1);
+
+    // Store the map with the relations
     for (int i = 0; i < n - 1; i++) {
         string s; cin >> s;
         string p; cin >> p;
-        int s_index = species_keys[s];
-        int p_index = species_keys[p];
-        relations[s_index] = p_index;
+        species_relations[s] = p;
     }
 
-    // Store queries
-    vector<pair<int, long> > queries(q);
-    for (int i = 0; i < n; i++) {
-        string n; cin >> n;
-        cin >> queries[i].second;
-        queries[i].first = species_keys[n];
-    }
+    // For each query
+    for (int i = 0; i < q; i++) {
+        string specie; cin >> specie;
+        int limit_age; cin >> limit_age;
 
-    // Resolve each query
-    for (int j = 0; j < n; j++) {
-        int q_specie = queries[j].first;
-        long q_age = queries[j].second;
+        int current_age = species_age[specie];
+        string current_specie;
+        string next_specie = specie;
 
-        int specie_result = q_specie;
-        while (true) {
-            int upper_specie = relations[specie_result];
-            if (upper_specie == -1 || species_age[upper_specie] > q_age) {
+        while (current_age <= limit_age) {
+            //cout << current_age << " ";
+            current_specie = next_specie;
+            next_specie = species_relations[current_specie];
+            if (next_specie == "") {
                 break;
             }
-            specie_result = upper_specie;
+            current_age = species_age[next_specie];
         }
 
-        cout << species_name[specie_result];
-        if (j == n - 1) {
-            cout << endl;
-        } else {
-            cout << ' ';
-        }
+        string con_str = i == n-1 ? "\n" : " ";
+        cout << current_specie << con_str;
+
     }
 
 }

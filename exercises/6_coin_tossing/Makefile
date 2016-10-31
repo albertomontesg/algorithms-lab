@@ -1,13 +1,14 @@
 
 CC=g++-4.9
 COMPILE_FLAGS=-Wall -O3 -std=c++11
-DEBUG_FLAGS=-Wall -O0 -g -std=c++11
+BGL_COMPILE_FLAGS=-O2 -std=c++11 -I /usr/local/include/boost
+DEBUG_FLAGS=-Wall -O0 -g -std=c++11 -I /usr/local/include/boost
 
-NAME=#Name of the exercise comes here
+NAME=coin_tossing
 
 all:
 	if [ ! -d bin ] ; then mkdir bin ; fi;
-	$(CC) $(COMPILE_FLAGS) -o bin/$(NAME) $(NAME).cpp
+	$(CC) $(BGL_COMPILE_FLAGS) -o bin/$(NAME) $(NAME).cpp
 
 debug:
 	if [ ! -d bin ] ; then mkdir bin ; fi;

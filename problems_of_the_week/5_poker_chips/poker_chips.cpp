@@ -21,22 +21,24 @@ double play(vector<vector<int> >& stacks, vector<int> sp) {
     if (all_of(sp.begin(), sp.end(), [](int i){return i == 0;})) {
         return 0;
     }
-    map<int, vector<bool> > groups;
+    map<int, int > groups;
     for (int i = 0; i < sp.size(); i++) {
         if (sp[i] == 0) {
             continue;
         }
-        int c = stacks[i][sp[i]];
-        if (groups.count(c) == 0) {
-            groups[c] = vector<bool>(false);
-            groups[c][i] = true;
-        }
+        int c = stacks[i][sp[i]-1];
+        if (groups.count(c) == 0) { groups[c] = 1; } // Initialize key
+        groups[c] |= 1<<i;
     }
     // Check for each group of colors, the award and recurisivity
     vector<double> results(0);
     int c = 0;
     for (auto it = groups.begin(); it != groups.end(); it++) {
-        vector<bool> chips = it->second;
+        int chips = it->second;
+
+        
+
+
         double result = award(chips.size());
         vector<int> positions(sp.size());
         for (int j = 0; j < sp.size(); j++) {

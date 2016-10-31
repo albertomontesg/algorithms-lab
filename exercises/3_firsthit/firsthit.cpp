@@ -1,73 +1,83 @@
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <iostream>
-#include <cmath>
+#include <vector>
+#include <algorithm>
+#include <type_traits>
+#include <stdexcept>
 #include <limits>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
-typedef K::Point_2 P;
-typedef K::Segment_2 S;
-typedef K::Ray_2 R;
+typedef std::result_of<K::Intersect_2(K::Ray_2,K::Segment_2)>::type IT;
 
-using namespace std;
-
+// round down to next double
 double floor_to_double(const K::FT& x) {
-    double a = floor(CGAL::to_double(x));
+    double a = std::floor(CGAL::to_double(x));
     while (a > x) a -= 1;
     while (a+1 <= x) a += 1;
     return a;
 }
 
-void print_point(const P& p) {
-    cout << fixed << setprecision(0) << floor_to_double(p.x()) << " " << floor_to_double(p.y()) << "\n";
+// read segment std::cin; as each coordinate can be represented as a
+// long, this is significantly faster than K::Segment_2 s; std::cin >> s;
+inline K::Segment_2 read_segment() {
+    long x1, y1, x2, y2;
+    std::cin >> x1 >> y1 >> x2 >> y2;
+    return K::Segment_2(K::Point_2(x1,y1), K::Point_2(x2,y2));
 }
 
-void compute_firsthit(int n) {
-    long x, y, a, b;
-    cin >> x >> y >> a >> b;
-    P xy(x, y), ab(a, b);
-    R ray(xy, ab);
+// clip/set target of s to o
+void shorten_segment(K::Segment_2& s, const IT& o) {
+    if (const K::Point_2* p = boost::get<K::Point_2>(&*o))
+        s = K::Segment_2(s.source(), *p);
+    else if (const K::Segment_2* t = boost::get<K::Segment_2>(&*o))
+        // select endpoint of *t closer to s.source()
+        if (CGAL::collinear_are_ordered_along_line (s.source(), t->source(), t->target()))
+            s = K::Segment_2(s.source(), t->source());
+        else
+            s = K::Segment_2(s.source(), t->target());
+    else
+        throw std::runtime_error("Strange segment intersection.");
+}
 
-    bool hit = false;
-    P hit_point;
-    for (int i = 0; i < n; i++) {
-        long r, s, t, u;
-        cin >> r >> s >> t >> u;
-        P rs(r, s), tu(t, u);
-        S seg(rs, tu);
+void find_hit(std::size_t n) {
+    // read input
+    K::Ray_2 r;
+    std::cin >> r;
+    std::vector<K::Segment_2> segs;
+    segs.reserve(n);
+    for (std::size_t i = 0; i < n; ++i) segs.push_back(read_segment());
+    std::random_shuffle(segs.begin(), segs.end());
 
-        if (CGAL::do_intersect(ray, seg)) {
-            P intersect;
-            auto o = CGAL::intersection(ray, seg);
-            if (const P* op = boost::get<P>(&*o)) {
-                intersect = *op;
-            } else if (const S* se = boost::get<S>(&*o)) {
-                intersect = (CGAL::has_smaller_distance_to_point(ray.source(), se->source(), se->target())) ? se->source() : se->target();
-            }
-            if (!hit) {
-                hit = true;
-                hit_point = intersect;
-            } else if (CGAL::has_smaller_distance_to_point(ray.source(), intersect, hit_point)) {
-                hit_point = intersect;
-            }
+    // clip the ray at each segment hit (cuts down on the number of
+    // intersection points to be constructed: for a uniformly random
+    // order of segments, the expected number of constructions is
+    // logarithmic in the number of segments that intersect the initial // ray.)
+    K::Segment_2 rc(r.source(), r.source());
+
+    // find some segment hit by r
+    std::size_t i = 0;
+    for (; i < n; ++i)
+        if (CGAL::do_intersect(segs[i], r)) {
+            shorten_segment(rc, CGAL::intersection(segs[i], r));
+            break;
         }
-    }
 
-    if (hit) {
-        print_point(hit_point);
-    } else {
-        cout << "no" << endl;
-    }
+    if (i == n) { std::cout << "no\n"; return; }
+    // check remaining segments against rc
+    while (++i < n)
+        if (CGAL::do_intersect(segs[i], rc))
+            shorten_segment(rc, CGAL::intersection(segs[i], r)); // not rc!
+
+    std::cout << floor_to_double(rc.target().x()) << " " << floor_to_double(rc.target().y()) << "\n";
 
 }
-
 
 int main() {
-    int nb_obstacles; cin >> nb_obstacles;
-
-    while(nb_obstacles > 0) {
-        compute_firsthit(nb_obstacles);
-        cin >> nb_obstacles;
-    }
+    // sanity check
+    if (std::numeric_limits<long>::digits < 51)
+        throw std::runtime_error("long has <51 bits mantissa");
+    std::ios_base::sync_with_stdio(false);
+    std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(0);
+    for (std::size_t n; std::cin >> n && n > 0;)
+        find_hit(n);
     return 0;
 }

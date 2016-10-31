@@ -9,4 +9,4 @@ for output in testsets/*.out ; do
     echo $output
     diff $output ${output%.out}.in.tmp ;
 done
-#rm testsets/*.in.tmp
+rm testsets/*.in.tmp

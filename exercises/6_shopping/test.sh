@@ -1,9 +1,9 @@
-NAME=hit
+NAME=shopping
 
 echo "Running tests"
 for input in testsets/*.in ; do
     echo $input
-    time ./$NAME.o < $input > $input.tmp ;
+    time ./bin/$NAME < $input > $input.tmp ;
 done
 for output in testsets/*.out ; do
     echo $output

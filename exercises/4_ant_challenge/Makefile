@@ -2,7 +2,7 @@
 CC=g++-4.9
 COMPILE_FLAGS=-Wall -O3 -std=c++11
 BGL_COMPILE_FLAGS=-O2 -std=c++11 -I /usr/local/include/boost
-DEBUG_FLAGS=-Wall -O0 -g -std=c++11
+DEBUG_FLAGS=-Wall -O0 -g -std=c++11 -I /usr/local/include/boost
 
 NAME=ant_challenge
 
@@ -25,7 +25,7 @@ test:
 	for output in testsets/*.out ; do \
 		diff $$output $${output%.out}.in.tmp ; \
 	done
-	#rm testsets/*.in.tmp
+	rm testsets/*.in.tmp
 
 time:
 	for input in testsets/*.in ; do \

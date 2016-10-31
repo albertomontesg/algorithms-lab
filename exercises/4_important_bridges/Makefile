@@ -1,13 +1,14 @@
 
 CC=g++-4.9
 COMPILE_FLAGS=-Wall -O3 -std=c++11
+BGL_COMPILE_FLAGS=-O2 -std=c++11 -I /usr/local/include/boost
 DEBUG_FLAGS=-Wall -O0 -g -std=c++11
 
-NAME=#Name of the exercise comes here
+NAME=important_bridges
 
 all:
 	if [ ! -d bin ] ; then mkdir bin ; fi;
-	$(CC) $(COMPILE_FLAGS) -o bin/$(NAME) $(NAME).cpp
+	$(CC) $(BGL_COMPILE_FLAGS) -o bin/$(NAME) $(NAME).cpp
 
 debug:
 	if [ ! -d bin ] ; then mkdir bin ; fi;
@@ -24,7 +25,7 @@ test:
 	for output in testsets/*.out ; do \
 		diff $$output $${output%.out}.in.tmp ; \
 	done
-	rm testsets/*.in.tmp
+	#rm testsets/*.in.tmp
 
 time:
 	for input in testsets/*.in ; do \

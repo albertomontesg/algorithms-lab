@@ -45,36 +45,57 @@ void graphs() {
         }
     }
 
-    // For each specia graph search the minimum spanning tree to know which is the
-    // graph each specie see and can travel
-    vector<vector<Vertex> > primpredmap(s, vector<Vertex>(n));
-    for (int i = 0; i < s; i++) {
-        Vertex v; cin >> v;
-        prim_minimum_spanning_tree(Gs[i], make_iterator_property_map(primpredmap[i].begin(), get(vertex_index, Gs[i])), root_vertex(v));
-    }
 
-    // Merge all spanning trees choosing for each edge the one with minimum weight
     Graph G;
     WeightMap weightmap = get(edge_weight, G);
 
+    vector<Vertex> primpredmap(n);
     for (int i = 0; i < s; i++) {
-        for (int j = 0; j < n; j++) {
-            Vertex source = j;
-            Vertex target = primpredmap[i][j];
-            Edge edge_to_look, edge_specie;
-            bool found, success_specie;
-            tie(edge_to_look, found) = edge(j, primpredmap[i][j], G);
-            // tie(edge_specie, success_specie) = edge(j, primpredmap[i][j], Gs[i]);
-            if (found) {
-                // The edge already exist so it is only necessary to update to the minimum weight
-                // weightmap[edge_to_look] = min(weightmap[edge_to_look], weightmaps[i][edge_specie]);
-            } else {
-                Edge new_edge; bool new_success;
-                tie(new_edge, new_success) = add_edge(source, target, G);
-                // weightmap[new_edge] = weightmaps[i][edge_specie];
-            }
-        }
+        prim_minimum_spanning_tree(Gs[i], make_iterator_property_map(primpredmap.begin(), get(vertex_index, Gs[i])));
+
+        // for (int j = 0; j < n-1; j++) {
+        //     Vertex source = j, target = primpredmap[j];
+        //     Edge edge_s; bool success;
+            // tie(edge_s, success) = edge(source, target, Gs[i]);
+            // int weight = weightmaps[i][edge_s];
+            // Edge new_edge;
+            // tie(new_edge, success) = add_edge(source, target, G);
+            // weightmap[new_edge] = weight;
+        // }
     }
+
+
+
+    // For each specia graph search the minimum spanning tree to know which is the
+    // graph each specie see and can travel
+    // vector<vector<Vertex> > primpredmap(s, vector<Vertex>(n));
+    // for (int i = 0; i < s; i++) {
+    //     Vertex v; cin >> v;
+    //     prim_minimum_spanning_tree(Gs[i], make_iterator_property_map(primpredmap[i].begin(), get(vertex_index, Gs[i])));
+    // }
+    //
+    // // Merge all spanning trees choosing for each edge the one with minimum weight
+    // Graph G;
+    // WeightMap weightmap = get(edge_weight, G);
+    //
+    // for (int i = 0; i < s; i++) {
+    //     for (int j = 0; j < n; j++) {
+    //         Vertex source = j;
+    //         Vertex target = primpredmap[i][j];
+    //         Edge edge_to_look, edge_specie;
+    //         bool found, success_specie;
+    //         // tie(edge_to_look, found) = edge(j, primpredmap[i][j], G);
+    //         // tie(edge_specie, success_specie) = edge(j, primpredmap[i][j], Gs[i]);
+    //         if (found) {
+    //             // The edge already exist so it is only necessary to update to the minimum weight
+    //             // weightmap[edge_to_look] = min(weightmap[edge_to_look], weightmaps[i][edge_specie]);
+    //         } else {
+    //             Edge new_edge; bool new_success;
+    //             tie(new_edge, new_success) = add_edge(source, target, G);
+    //             // weightmap[new_edge] = weightmaps[i][edge_specie];
+    //         }
+    //     }
+    // }
     //
     //
     // // Compute the dijkstra shortest path

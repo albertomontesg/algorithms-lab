@@ -1,4 +1,4 @@
-NAME=hit
+NAME=great_game
 
 echo "Running tests"
 for input in testsets/*.in ; do

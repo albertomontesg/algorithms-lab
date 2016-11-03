@@ -3,7 +3,7 @@ CC=g++-4.9
 COMPILE_FLAGS=-Wall -O3 -std=c++11
 DEBUG_FLAGS=-Wall -O0 -g -std=c++11
 
-NAME=#Name of the exercise comes here
+NAME=great_game
 
 all:
 	if [ ! -d bin ] ; then mkdir bin ; fi;

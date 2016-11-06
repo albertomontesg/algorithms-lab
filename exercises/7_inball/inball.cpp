@@ -20,18 +20,19 @@ void inball(int n){
     int d; cin >> d;
 
     Program lp (CGAL::SMALLER, false, 0, false, 0);
-
     lp.set_c(d, -1);
+    lp.set_l(d, true, 0);
     for (int i = 0; i < n; i++) {
+        long norm = 0;
         for (int j = 0; j < d; j++) {
             long a; cin >> a;
             lp.set_a(j, i, a);
+            norm += a * a;
         }
-        lp.set_a(d, i, 1);
+        lp.set_a(d, i, sqrt(norm));
         long b; cin >> b;
         lp.set_b(i, b);
     }
-    lp.set_l(d, 0);
 
     Solution s = CGAL::solve_linear_program(lp, ET());
     assert (s.solves_linear_program(lp));

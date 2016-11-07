@@ -45,3 +45,6 @@ cmake_install.cmake
 install_manifest.txt
 CTestTestfile.cmake
 CMakeLists*
+
+*.diff
+*.myout

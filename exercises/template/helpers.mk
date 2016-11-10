@@ -2,7 +2,7 @@
 
 # File locations
 BASENAME?=main # set BASENAME only if it was not set before
-EXE_LOC?=./bin/s$(BASENAME) # set EXE_LOC only if it was not set before
+EXE_LOC?=./bin/$(BASENAME) # set EXE_LOC only if it was not set before
 
 TEST_DIR=./test
 

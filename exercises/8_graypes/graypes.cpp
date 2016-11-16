@@ -6,6 +6,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Delaunay_triangulation_2<K>                   Triangulation;
 typedef Triangulation::Finite_faces_iterator                Face_iterator;
+typedef Triangulation::Edge_iterator                        EdgeIt;
 
 using namespace std;
 
@@ -18,30 +19,22 @@ double ceil_to_double(const K::FT& x) {
 }
 
 void graypes(int n) {
-    vector<K::Point_2> p(n-1);
+    vector<K::Point_2> p(n);
     Triangulation t;
 
-    long x, y; cin >> x >> y;
-    K::Point_2 p_q(x, y);
-    for (int i = 0; i < n-1; i++) {
+    for (int i = 0; i < n; i++) {
         long x, y;
         cin >> x >> y;
         p[i] = K::Point_2(x, y);
     }
-
     t.insert(p.begin(), p.end());
-    K::Point_2 n_p =  t.nearest_vertex(p_q)->point();
-    t.remove(t.nearest_vertex(p_q));
 
-    K::FT d;
-    if (t.number_of_vertices() == 0) {
-        d = sqrt(CGAL::squared_distance(n_p, p_q)) * 100 / 2 ;
-    } else if (CGAL::squared_distance(p_q,n_p) < CGAL::squared_distance(n_p, t.nearest_vertex(n_p)->point())) {
-        d = sqrt(CGAL::squared_distance(n_p, p_q)) * 100 / 2 ;
-    } else {
-        cout << p_q << "\t" << n_p;
-        d = sqrt(CGAL::squared_distance(n_p, p_q)) * 0 / 2 ;
+    K::FT min_dist = t.segment(t.finite_edges_begin()).squared_length();
+    for (EdgeIt e = t.finite_edges_begin(); e != t.finite_edges_end(); e++) {
+        min_dist = min(min_dist, t.segment(e).squared_length());
     }
+
+    K::FT d = sqrt(min_dist * (100 * 100) / (2 * 2));
 
     cout << ceil_to_double(d) << endl;
 

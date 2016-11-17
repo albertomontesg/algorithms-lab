@@ -36,7 +36,7 @@ test: all
 		referene=$${input%.in}.out; \
 		myout=$${input%.in}.myout; \
 		differences=$${input%.in}.diff; \
-		$(EXE_LOC) < $$input > $$myout ; \
+		time $(EXE_LOC) < $$input > $$myout ; \
 		diff --side-by-side $$referene $$myout >$$differences; \
 		if [ $$? -eq 0 ]; \
 		then \

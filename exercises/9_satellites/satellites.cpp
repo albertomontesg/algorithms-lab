@@ -65,35 +65,51 @@ void satellites() {
     cin >> g >> s >> l;
 
     vector<int> ground(l), sat(l), max_ground(g, 0), max_sat(s, 0);
+    int max_cap = 0;
     for (int i = 0; i < l; i++) {
         int from, to;
         cin >> from >> to;
         ground[i] = from; sat[i] = to;
         max_ground[from]++; max_sat[to]++;
+        max_cap = max(max_cap, max_ground[from]);
+        max_cap = max(max_cap, max_sat[to]);
     }
 
-    Graph G(2*g+2*s+2);
+    Graph G(g+s+2);
     EdgeCapacityMap capacitymap = get(edge_capacity, G);
     EdgeWeightMap weightmap = get(edge_weight, G);
     ReverseEdgeMap revedgemap = get(edge_reverse, G);
     ResidualCapacityMap rescapacitymap = get(edge_residual_capacity, G);
     EdgeAdder eaG(G, capacitymap, weightmap, revedgemap);
 
-    Vertex src = vertex(2*g+2*s, G);
-    Vertex sink = vertex(2*g+2*s+1, G);
+    Vertex src = vertex(g+s, G);
+    Vertex sink = vertex(g+s+1, G);
+
+    // for (int i = 0; i < g; i++) {
+    //     eaG.addEdge(i, sink, max_ground[i], 1);
+    // }
+    // for (int i = 0; i < s; i++) {
+    //     eaG.addEdge(g+l+i, sink, max_sat[i], 1);
+    // }
+    // for (int i = 0; i < l; i++) {
+    //     eaG.addEdge(src, g+i, 1, 0);
+    //     eaG.addEdge(g+i, ground[i], 1, 0);
+    //     eaG.addEdge(g+i, g+l+sat[i], 1, 0);
+    // }
+
+
+
 
     // Build edge connections of the graph
     for (int i = 0; i < g; i++) {
         eaG.addEdge(src, i, max_ground[i], 0);
-        eaG.addEdge(i, g+i, max_ground[i], 1);
+        eaG.addEdge(i, sink, max_ground[i], 1+max_cap-max_ground[i]);
     }
     for (int i = 0; i < s; i++) {
-        eaG.addEdge(2*g+s+i, sink, max_sat[i], 0);
-        eaG.addEdge(2*g+i, 2*g+s+i, max_sat[i], 1);
+        eaG.addEdge(g+i, sink, max_sat[i], 1+max_cap-max_sat[i]);
     }
     for (int i = 0; i < l; i++) {
-        eaG.addEdge(ground[i], 2*g+sat[i], 1, 0);
-        eaG.addEdge(g+ground[i], 2*g+s+sat[i], 1, 0);
+        eaG.addEdge(ground[i], g+sat[i], 1, 0);
     }
 
     successive_shortest_path_nonnegative_weights(G, src, sink);

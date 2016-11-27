@@ -1,66 +1,65 @@
 /*
-Implementation that first find the first interval that contains all the words. Then slide this
-interval along the words and try to reduce if possible to find the minimum.
+Implementation sliding window.
+Hint: to improve the efficiency, instead of loop along all the appearance vector to see if all the
+words appear, keep up a counter and changing it with conditions. It is much more efficient and clean
 */
 
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <math.h>
 #include <limits.h>
-
 
 using namespace std;
 
-
-bool not_at_end(vector<vector<long> >& queues, vector<vector<long>::iterator>& its) {
-    for (int i = 0; i < queues.size(); i++) {
-        if (its[i] == queues[i].end()) { return false; }
-    }
-    return true;
-}
+struct word {
+    int id;
+    int position;
+};
 
 void search_snippets() {
     int n; cin >> n;
 
-    vector<long> wo(n);
-    vector<vector<long> > wq(n);
-
-    // Store the word appearance
+    vector<int> m(n);
+    int t = 0;              // total word appearance
     for (int i = 0; i < n; i++) {
-        cin >> wo[i];
-        wq[i] = vector<long>(wo[i]);
+        cin >> m[i];
+        t += m[i];
     }
 
-    // Store in respective queues the word position
-    for (long i = 0; i < n; i++) {
-        for (int j = 0; j < wo[i]; j++) {
-            cin >> wq[i][j];
+    vector<word > w; w.reserve(t);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m[i]; j++) {
+            word wo; wo.id = i;
+            cin >> wo.position;
+            w.push_back(wo);
         }
     }
+    sort(w.begin(), w.end(), [](word a, word b) {
+        return a.position < b.position;
+    });
 
-    long l_w = distance(wo.begin(), max_element(wo.begin(), wo.end()));
-    long min_distance = LONG_MAX;
+    vector<int> a(n, 0);
+    int min_d = w[t-1].position - w[0].position + 1;
+    int s = 0, e = 0, u = n; // start, end, and uncovered counter
+    a[w[s].id]++; u--;
 
-    for (int i = 0; i < wo[l_w]; i++) {
-        long v = wq[l_w][i];
-        long min_upper = LONG_MAX, max_lower = 0;
-
-        for (int j = 0; j < n; j++) {
-            if (j == l_w) continue;
-            auto min_p = upper_bound(wq[j].begin(), wq[j].end(), v);
-            if (min_p != wq[j].end()) min_upper = min(min_upper, *min_p);
-            auto max_p = upper_bound(wq[j].begin(), wq[j].end(), v, greater<long>());
-            if (max_p != wq[j].end()) max_lower = min(max_lower, *max_p);
+    while (e != t) {
+        while (e < t - 1 && u > 0) {
+            e++;
+            if (a[w[e].id] == 0) u--;
+            a[w[e].id]++;
         }
-
-        if ( min_upper == LONG_MAX ) min_upper = v;
-        if ( max_lower == 0) max_lower = v;
-
-        long d = min_upper - max_lower + 1;
-        min_distance = min(min_distance, d);
+        if (u != 0) break;
+        do {
+            a[w[s].id]--;
+            if (a[w[s].id] == 0) ++u;
+        } while (++s != e && u==0);     // Even you go out of the while loop, s will have been
+                                        // incresed undiredbly
+        min_d = min(min_d, w[e].position - w[s-1].position + 1);
     }
 
-    cout << min_distance << endl;
+    cout << min_d << endl;
 }
 
 int main() {

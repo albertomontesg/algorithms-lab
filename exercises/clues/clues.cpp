@@ -7,15 +7,16 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/connected_components.hpp>
 
 using namespace std;
 using namespace boost;
 
-
+// BGL typedefs
 typedef adjacency_list<vecS, vecS, undirectedS, no_property, no_property>   Graph;
 typedef graph_traits<Graph>::edge_descriptor                                Edge;
 typedef graph_traits<Graph>::vertex_descriptor                              Vertex;
-
+// CGAL typedefs
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Triangulation_vertex_base_with_info_2<unsigned, K>    Vb;
 typedef CGAL::Triangulation_data_structure_2<Vb>                    Tds;
@@ -45,26 +46,70 @@ void clues() {
         cin >> x >> y; b[i] = Point(x, y);
     }
 
+    // Define the triangulation
     Triangulation t;
     t.insert(s.begin(), s.end());
-    FaceIt ft; bool interferance = false;
-    vector<int> fc(t.number_of_faces()); // Store for each face, how many edges have length < r^2
+    FaceIt ft; bool interference = false;
 
+    // Define the graph
+    Graph G(n);
+    Edge e; bool success;
+
+    // Iterate over all faces and see how many of triangles, all the edges are shorter than r so
+    // interferance is caused
     EdgeIt ei;
     map<Edge, bool> edge_seen;
+    VertexH vh_a, vh_b;
     for (ft = t.finite_faces_begin(); ft != t.finite_faces_end(); ft++) {
-        Triangle tr = t.triangle(ft);
         int count = 0;
         for (int j = 0; j < 3; j++) {
-            K::FT d = CGAL::squared_distance(tr[j], tr[(j+1)%3]);
-            if (d <= r*r) count++;
+            vh_a = ft->vertex(j); vh_b = ft->vertex((j+1)%3);
+            K::FT d = CGAL::squared_distance(vh_a->point(), vh_b->point());
+            if ( d <= r*r ) {
+                tie(e, success) = add_edge(vh_a->info(), vh_b->info(), G);
+                count++;
+            }
         }
-        if (count > 2) interferance = true;
+        if (count > 2) interference = true;
+    }
+    // In the case the triangulation doesn't make any finite triangle (1 or 2 vertex)
+    if (n == 2) {
+        // Only with two vertex is required to create an edge at the graph only if the distance
+        // is enough
+        if ( CGAL::squared_distance(s[0].first, s[1].first) <= r*r )
+            tie(e, success) = add_edge(0, 1, G);
     }
 
+    // Compute the connected components
+    vector<int> component(n);
+    connected_components(G, &component[0]);
+
+    int v_a, v_b, d_a, d_b, d_ab;
     for (int i = 0; i < m; i++) {
-        if (interferance) cout << "n";
-        else cout << "y";
+        // Check the interferance previously computed from the triangulation
+        if ( interference ) {
+            cout << "n";
+            continue;
+        }
+
+        // Search the nearest nodes to connect from a_i to b_i
+        v_a = t.nearest_vertex(a[i])->info();
+        v_b = t.nearest_vertex(b[i])->info();
+        // Compute the distances to check reachability
+        d_a = CGAL::squared_distance(s[v_a].first, a[i]);
+        d_b = CGAL::squared_distance(s[v_b].first, b[i]);
+        d_ab = CGAL::squared_distance(a[i], b[i]);
+        if ( d_ab <= r*r ) {
+            cout << "y";
+            continue;
+        } else if ( d_a > r*r || d_b > r*r ) {
+            cout << "n";
+            continue;
+        }
+
+        // Now check if the nodes which are connected a and b are in the same graph component
+        if (component[v_a] == component[v_b]) cout << "y";
+        else cout << "n";
     }
     cout << endl;
 

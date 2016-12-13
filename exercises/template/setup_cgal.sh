@@ -12,7 +12,7 @@ echo 'set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")' >> CMakeLists.txt
 # disable rounding math check: otherwise valgrind does not work
 echo 'set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCGAL_DISABLE_ROUNDING_MATH_CHECK")' >> CMakeLists.txt
 # disable optimizations
-echo 'set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")' >> CMakeLists.txt
+echo 'set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3")' >> CMakeLists.txt
 # cmake with debugging enabled
 cmake .
 cmake -DCMAKE_BUILD_TYPE=Debug .

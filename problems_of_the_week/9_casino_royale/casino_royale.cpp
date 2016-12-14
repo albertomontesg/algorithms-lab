@@ -68,21 +68,21 @@ void casino_royale() {
     const int MAX_PRIORITY = 1<<7;
 
     // Create Graph and Maps
-    Graph G(n+2);
+    Graph G(2*n+2);
     EdgeCapacityMap capacitymap = get(edge_capacity, G);
     EdgeWeightMap weightmap = get(edge_weight, G);
     ReverseEdgeMap revedgemap = get(edge_reverse, G);
     ResidualCapacityMap rescapacitymap = get(edge_residual_capacity, G);
     EdgeAdder eaG(G, capacitymap, weightmap, revedgemap);
-    Vertex src = n, sink = n+1;
+    Vertex src = 2*n, sink = 2*n+1;
 
-    for (int i = 0; i < n-1; i++) { eaG.addEdge(i, i+1, l, 0); }
+    for (int i = 0; i < 2*n-1; i++) { eaG.addEdge(i, i+1, l, 0); }
 
     for (int i = 0; i < m; i++) {
         int x, y, q;
         cin >> x >> y >> q;
-        eaG.addEdge(src, x, 1, MAX_PRIORITY - q);
-        eaG.addEdge(y, sink, 1, 0);
+        eaG.addEdge(src, 2*x + 1, 1, MAX_PRIORITY - q);
+        eaG.addEdge(2*y, sink, 1, 0);
     }
 
     // Compute flow and cost
@@ -90,20 +90,6 @@ void casino_royale() {
     int cost = find_flow_cost(G);
     int flow = 0, f;
 
-    // for (int i = 0; i < n; i++) {
-    //     Edge e; bool success;
-    //     tie(e, success) = edge(src, i, G);
-    //     if (success) {
-    //         f = capacitymap[e] - rescapacitymap[e];
-    //         flow += f;
-    //         cost -= f * MAX_PRIORITY;
-    //     }
-    //     tie(e, success) = edge(i, sink, G);
-    //     if (success) {
-    //         f = capacitymap[e] - rescapacitymap[e];
-    //         cost -= f * MAX_PRIORITY;
-    //     }
-    // }
 
     OutEdgeIt e, eend;
     for(tie(e, eend) = out_edges(vertex(src,G), G); e != eend; ++e) {
@@ -113,7 +99,7 @@ void casino_royale() {
     }
     cost = -cost;
 
-    cout << flow << " " << cost << endl;
+    cout << cost << endl;
 
 }
 

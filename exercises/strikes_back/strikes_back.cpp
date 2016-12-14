@@ -11,7 +11,7 @@
 
 // LP
 typedef CGAL::Gmpzf ET;
-typedef CGAL::Quadratic_program<float> Program;
+typedef CGAL::Quadratic_program<double> Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 // Delaunay
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -69,7 +69,8 @@ void strikes_back() {
             lp.set_a(i, j, coef);
         }
         lp.set_c(i, 1);         // Minimize the sum of energy at each shot
-        lp.set_a(i, a, 1);  // (*) Set a last inequality maximizing the total amount of energy used
+        lp.set_a(i, a, 1);      // (*) Set a last inequality upbounding the total amount of energy
+                                // used
     }
     lp.set_b(a, e);                 // (*)
     lp.set_r(a, CGAL::SMALLER);     // (*)

@@ -16,7 +16,7 @@ void evolution() {
     vector<string> species_name(n);
     vector<int> species_age(n), species_adj(n, -1);
 
-    string name, name_next; int age, current_age, limit_age;
+    string name, name_next; int age, limit_age;
     for (int i = 0; i < n; i++) {
         cin >> name >> age;
         species_idx[name] = i;
@@ -26,64 +26,32 @@ void evolution() {
 
     // Store the adjacency map
     int idx, idx_next;
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n-1; i++) {
         cin >> name >> name_next;
         idx = species_idx[name]; idx_next = species_idx[name_next];
         species_adj[idx] = idx_next;
     }
 
     // Resolve each query
+    int specie_result, upper_specie;
     for (int i = 0; i < q; i++) {
         cin >> name >> limit_age;
-        idx = species_idx[name];
+        int q_specie = species_idx[name];
         idx_next = idx;
 
-        do {
-            idx = idx_next;
-            idx_next = species_adj[idx];
-            if (idx_next == -1) break;
-            current_age = species_age[idx_next];
-        } while (current_age < limit_age);
+        specie_result = q_specie;
+        int count = 0;
+        upper_specie = species_adj[specie_result];
+        while (upper_specie != -1 && species_age[upper_specie] <= limit_age) {
+            count++;
+            specie_result = upper_specie;
+            upper_specie = species_adj[specie_result];
+        }
 
         string con_str = (i == n-1) ? "\n" : " ";
-        cout << species_name[idx] << con_str;
+        cout << species_name[specie_result] << con_str;
 
     }
-
-    // map<string, int> species_age;
-    // map<string, string> species_relations;
-    // string key, key_r; int age;
-    // for (int i = 0; i < n; i++) {
-    //     cin >> key >> age;
-    //     species_age[key] = age;
-    // }
-    //
-    // // Store the map with the relations
-    // for (int i = 0; i < n - 1; i++) {
-    //     cin >> key >> key_r;
-    //     species_relations[key] = key_r;
-    // }
-    //
-    // // For each query
-    // string specie, next_specie;
-    // int limit_age, current_age;
-    // for (int i = 0; i < q; i++) {
-    //     cin >> specie >> limit_age;
-    //
-    //     next_specie = specie;
-    //     current_age = species_age[specie];
-    //
-    //     while (current_age <= limit_age) {
-    //         specie = next_specie;
-    //         auto search = species_relations.find(specie);
-    //         if (search == species_relations.end()) break;
-    //         next_specie = search->second;
-    //         current_age = species_age[next_specie];
-    //     }
-    //
-    //     string con_str = (i == n-1) ? "\n" : " ";
-    //     cout << specie << con_str;
-    // }
 
 }
 

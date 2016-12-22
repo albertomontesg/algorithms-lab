@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named goldeneye_2
+
+# Build rule for target.
+goldeneye_2: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 goldeneye_2
+.PHONY : goldeneye_2
+
+# fast build rule for target.
+goldeneye_2/fast:
+	$(MAKE) -f CMakeFiles/goldeneye_2.dir/build.make CMakeFiles/goldeneye_2.dir/build
+.PHONY : goldeneye_2/fast
+
+#=============================================================================
 # Target rules for targets named goldeneye
 
 # Build rule for target.
@@ -150,6 +163,33 @@ goldeneye.cpp.s:
 	$(MAKE) -f CMakeFiles/goldeneye.dir/build.make CMakeFiles/goldeneye.dir/goldeneye.cpp.s
 .PHONY : goldeneye.cpp.s
 
+goldeneye_2.o: goldeneye_2.cpp.o
+
+.PHONY : goldeneye_2.o
+
+# target to build an object file
+goldeneye_2.cpp.o:
+	$(MAKE) -f CMakeFiles/goldeneye_2.dir/build.make CMakeFiles/goldeneye_2.dir/goldeneye_2.cpp.o
+.PHONY : goldeneye_2.cpp.o
+
+goldeneye_2.i: goldeneye_2.cpp.i
+
+.PHONY : goldeneye_2.i
+
+# target to preprocess a source file
+goldeneye_2.cpp.i:
+	$(MAKE) -f CMakeFiles/goldeneye_2.dir/build.make CMakeFiles/goldeneye_2.dir/goldeneye_2.cpp.i
+.PHONY : goldeneye_2.cpp.i
+
+goldeneye_2.s: goldeneye_2.cpp.s
+
+.PHONY : goldeneye_2.s
+
+# target to generate assembly for a file
+goldeneye_2.cpp.s:
+	$(MAKE) -f CMakeFiles/goldeneye_2.dir/build.make CMakeFiles/goldeneye_2.dir/goldeneye_2.cpp.s
+.PHONY : goldeneye_2.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -158,10 +198,14 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... goldeneye_2"
 	@echo "... goldeneye"
 	@echo "... goldeneye.o"
 	@echo "... goldeneye.i"
 	@echo "... goldeneye.s"
+	@echo "... goldeneye_2.o"
+	@echo "... goldeneye_2.i"
+	@echo "... goldeneye_2.s"
 .PHONY : help
 
 

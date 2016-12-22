@@ -3,55 +3,85 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
-#include <map>
+#include <unordered_map>
 
 using namespace std;
 
+
+// Binary Search
+int binary(int b, vector<int>& path, vector<int>& age) {
+    int l = 0; int r = path.size()-1;
+    while(l != r){
+        int m = (l+r)/2;
+        if (age[path[m]] > b) l = m+1; else r = m;
+    }
+    return path[l];
+}
+
+// DFS
+void dfs(int u, vector<vector<int> >& tree, vector<int>& path, vector<vector<pair<int,int> > >& query, vector<int>& result, vector<int>& age) {
+    // process queries
+    for (int i = 0; i < query[u].size(); i++) {
+        result[query[u][i].second] = binary(query[u][i].first,path,age);
+    }
+
+    // continue search
+    for (int i = 0; i < tree[u].size(); ++i){
+        int v = tree[u][i];
+        path.push_back(v);
+        dfs(v,tree,path,query,result,age);
+    }
+    path.pop_back();
+}
 
 void evolution() {
     int n, q; cin >> n >> q;
 
     // Store the names and respective ages
-    map<string, int> species_idx;
-    vector<string> species_name(n);
-    vector<int> species_age(n), species_adj(n, -1);
-
-    string name, name_next; int age, limit_age;
+    unordered_map<string, int> species_to_index;
+    vector<string> species(n);
+    vector<int> age(n);
+    string name;
     for (int i = 0; i < n; i++) {
-        cin >> name >> age;
-        species_idx[name] = i;
-        species_name[i] = name;
-        species_age[i] = age;
+        cin >> name;
+        species_to_index[name] = i;
+        species[i] = name;
+        cin >> age[i];
     }
 
-    // Store the adjacency map
-    int idx, idx_next;
-    for (int i = 0; i < n-1; i++) {
-        cin >> name >> name_next;
-        idx = species_idx[name]; idx_next = species_idx[name_next];
-        species_adj[idx] = idx_next;
+    // Find root
+    int root = max_element(age.begin(), age.end()) - age.begin();
+
+    // Read tree
+    vector<vector<int> > tree(n);
+    string child, parent;
+    for (int i = 0; i < n - 1; i++) {
+        cin >> child >> parent;
+        tree[species_to_index[parent]].push_back(species_to_index[child]);
     }
 
-    // Resolve each query
-    int specie_result, upper_specie;
+    // Read queries: for each species store a vector of queries consisting of the age b and the
+    // index of the query i
+    vector<vector<pair<int, int> > > query(n);
     for (int i = 0; i < q; i++) {
-        cin >> name >> limit_age;
-        int q_specie = species_idx[name];
-        idx_next = idx;
-
-        specie_result = q_specie;
-        int count = 0;
-        upper_specie = species_adj[specie_result];
-        while (upper_specie != -1 && species_age[upper_specie] <= limit_age) {
-            count++;
-            specie_result = upper_specie;
-            upper_specie = species_adj[specie_result];
-        }
-
-        string con_str = (i == n-1) ? "\n" : " ";
-        cout << species_name[specie_result] << con_str;
-
+        cin >> name;
+        int b; cin >> b;
+        query[species_to_index[name]].push_back(make_pair(b, i));
     }
+
+    // Process queries in one tree transversal
+    vector<int> path; path.push_back(root);
+    vector<int> result(q);
+    dfs(root, tree, path, query, result, age);
+
+
+
+    // Output result
+    for (int i = 0; i < q; i++) {
+        cout << species[result[i]];
+        if ( i < q - 1 ) cout << " ";
+    }
+    cout << endl;
 
 }
 

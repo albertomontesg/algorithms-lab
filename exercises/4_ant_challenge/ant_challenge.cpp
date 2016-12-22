@@ -57,16 +57,12 @@ void graphs() {
 
         Edge edge_s; bool success;
         Edge new_edge; bool new_success;
-        // cout << "s: " << s << endl;
         for (int j = 0; j < n; j++) {
             if (j == primpredmap[j]) { continue; }
 
-            // cout << "j: " << j << endl;
             Vertex source = j, target = primpredmap[j];
-            // cout << "source: " << source << " target: " << target << endl;
             tie(edge_s, success) = edge(source, target, Gs[i]);
             int weight = weightmaps[i][edge_s];
-            // cout << "weight: " << weight << endl;
             tie(new_edge, new_success) = add_edge(j, primpredmap[j], G);
             weightmap[new_edge] = weight;
 

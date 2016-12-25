@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <map>
+#include <unordered_map>
 // BGL includes
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/max_cardinality_matching.hpp>
@@ -25,13 +25,12 @@ void buddy_selection() {
     int n, c, f;
     cin >> n >> c >> f;
 
-    Graph G_s(n);
-    WeightMap weightmap_s = get(edge_weight, G_s);
+    vector<vector<int> > adjacency_list(n, vector<int>(n, 0));
 
     /* Create the graph with all the edges that have higher weight than f and perform maximum
     cardinality matching to find a more optimal solution of the problem. If cardinality matching is
     equal to n/2 it means that the solution propoesed `f` is not the optimal */
-    map<string, vector<int> > characteristics;
+    std::unordered_map<string, vector<int> > characteristics;
     string name;
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < c; j++) {
@@ -50,14 +49,8 @@ void buddy_selection() {
         for (int i = 0; i < np; i++) {
             for (int j = i+1; j < np; j++) {
                 int p_i = people[i], p_j = people[j];
-                Edge connection; bool success;
-                tie(connection, success) = edge(p_i, p_j, G_s);
-                if (success) { // The connection already exists
-                    weightmap_s[connection]++;
-                } else {
-                    tie(connection, success) = add_edge(p_i, p_j, G_s);
-                    weightmap_s[connection] = 1;
-                }
+                adjacency_list[p_i][p_j]++;
+                adjacency_list[p_j][p_i]++;
             }
         }
     }
@@ -67,14 +60,14 @@ void buddy_selection() {
     WeightMap weightmap = get(edge_weight, G);
 
     // Now iterate over all edges and substract the edges with a weight less than `f`
-    EdgeIt eib, eie;
-    for (tie(eib, eie) = edges(G_s); eib != eie; eib++) {
-        Edge edge_c = *eib;
-        int weight = weightmap_s[edge_c];
-        if (weight > f) {
-            Edge edg; bool success;
-            tie(edg, success) = add_edge(source(edge_c, G), target(edge_c, G), G);
-            weightmap[edg] = weight - f;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            int weight = adjacency_list[i][j];
+            if (weight > f) {
+                Edge edg; bool success;
+                tie(edg, success) = add_edge(i, j, G);
+                weightmap[edg] = weight - f;
+            }
         }
     }
 

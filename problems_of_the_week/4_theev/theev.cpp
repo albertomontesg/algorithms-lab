@@ -1,22 +1,24 @@
 
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
 #include <iostream>
 #include <vector>
-#include <set>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel K;
-typedef K::Point_2 P;
-typedef CGAL::Min_circle_2_traits_2<K> Traits;
-typedef CGAL::Min_circle_2<Traits> Min_circle;
+typedef CGAL::Exact_predicates_exact_constructions_kernel   EK;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel IK;
+typedef IK::Point_2                                         P;
+typedef EK::Point_2                                         eP;
+typedef CGAL::Min_circle_2_traits_2<EK>                     Traits;
+typedef CGAL::Min_circle_2<Traits>                          Min_circle;
 
 using namespace std;
 
 
-double ceil_to_double(const K::FT& x) {
+double ceil_to_double(const IK::FT& x) {
     double a = ceil(CGAL::to_double(x));
-    while (a+1 >= x) a -= 1;
+    while (a + 1 >= x) a -= 1;
     while (a < x) a += 1;
     return a;
 }
@@ -28,53 +30,57 @@ void theev() {
     long x, y; cin >> x >> y;
     P their_city(x,y);
 
-    vector<P> cities(n);
-    for (int i = 1; i < n; i++) {
-        long x, y;
+    vector<P> cities(n-1);
+    for (int i = 0; i < n-1; i++) {
         cin >> x >> y;
         cities[i] = P(x, y);
     }
 
-    K::FT tc_radius(0);
-    K::FT ex_radius(0);
-
-    vector<P> c(1);
-    c[0] = cities[0];
-
-    P ex_center = c[0];
-
-    set<pair<K::FT, P>, std::greater<pair<K::FT, P> > > distances_to_TC;
-    for (int i = 1; i < n-1; i++) {
-        P point = cities[i];
-        K::FT d_tc = CGAL::squared_distance(point, their_city);
-        K::FT d_ex = CGAL::squared_distance(point, ex_center);
-        if (d_tc <= d_ex) {
-            // Add point to the TC transmissor
-            if (d_tc > tc_radius) {
-                tc_radius = d_tc;
-            }
-        } else {
-            c.push_back(point);
-            Min_circle mc(c.begin(), c.end(), true);
-            Traits::Circle circle = mc.circle();
-            ex_center = circle.center();
-            ex_radius = circle.squared_radius();
-
-            Min_circle all_mc(c.begin(), c.begin()+i-1, true);
-
-
-        }
-        // Add all the closest points from the external circle to the TC
-        auto start = distances_to_TC.begin();
-        while (start != distances_to_TC.end()) {
-            if (CGAL::squared_distance(start->second, their_city) <= CGAL::squared_distance(start->second, ex_center)) {
-                distances_to_TC.erase(start);
-            }
-            start++;
-        }
+    // For the cas we have one or two cities where the min radius will be 0
+    if (n <= 2) {
+        cout << 0 << endl;
+        return;
     }
 
-    cout << min(ceil_to_double(tc_radius), ceil_to_double(ex_radius)) << endl;
+    sort(cities.begin(), cities.end(),
+        [&their_city](P a, P b) {
+        return CGAL::squared_distance(a, their_city) > CGAL::squared_distance(b, their_city);
+        }
+    );
+
+    vector<IK::FT> distances(n-1);
+    for (int i = 0; i < n - 1; i++) {
+        distances[i] = squared_distance(cities[i], their_city);
+    }
+
+    IK::FT tc_radius = distances[1], tc_prev_radius = distances[1];
+    IK::FT ex_radius = 0, ex_prev_radius = 0;
+
+    // Initialize the external circle with the furthest city
+    Min_circle min_ex_circle(eP(cities[0].x(), cities[0].y()));
+    Traits::Circle circle = min_ex_circle.circle();
+
+    int index = 1;
+
+    while (ex_radius < tc_radius && index < n - 1) {
+        tc_prev_radius = tc_radius;
+        ex_prev_radius = ex_radius;
+
+        min_ex_circle.insert(eP(cities[index].x(), cities[index].y()));
+        circle = min_ex_circle.circle();
+
+        tc_radius = distances[index + 1];
+        ex_radius = IK::FT(CGAL::to_double(circle.squared_radius()));
+
+        index++;
+    }
+
+    IK::FT result = min(
+        max(tc_radius, ex_radius),
+        max(tc_prev_radius, ex_prev_radius)
+    );
+
+    cout << ceil_to_double(result) << endl;
 
 }
 

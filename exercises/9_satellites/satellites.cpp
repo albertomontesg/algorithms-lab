@@ -1,13 +1,10 @@
 
 #include <iostream>
 #include <vector>
-#include <algorithm>
+#include <queue>
 // BGL includes
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/cycle_canceling.hpp>
 #include <boost/graph/push_relabel_max_flow.hpp>
-#include <boost/graph/successive_shortest_path_nonnegative_weights.hpp>
-#include <boost/graph/find_flow_cost.hpp>
 // Namespaces
 using namespace std;
 using namespace boost;
@@ -15,48 +12,47 @@ using namespace boost;
 
 // BGL Graph definitions
 // =====================
-// Graph Type with nested interior edge properties for Cost Flow Algorithms
-typedef adjacency_list_traits<vecS, vecS, directedS> Traits;
+// Graph Type with nested interior edge properties for Flow Algorithms
+typedef	adjacency_list_traits<vecS, vecS, directedS> Traits;
 typedef adjacency_list<vecS, vecS, directedS, no_property,
-    property<edge_capacity_t, long,
-        property<edge_residual_capacity_t, long,
-            property<edge_reverse_t, Traits::edge_descriptor,
-                property <edge_weight_t, long> > > > > Graph;
+	property<edge_capacity_t, long,
+		property<edge_residual_capacity_t, long,
+			property<edge_reverse_t, Traits::edge_descriptor> > > >	Graph;
 // Interior Property Maps
-typedef property_map<Graph, edge_capacity_t>::type      EdgeCapacityMap;
-typedef property_map<Graph, edge_weight_t >::type       EdgeWeightMap;
-typedef property_map<Graph, edge_residual_capacity_t>::type ResidualCapacityMap;
-typedef property_map<Graph, edge_reverse_t>::type       ReverseEdgeMap;
-typedef graph_traits<Graph>::vertex_descriptor          Vertex;
-typedef graph_traits<Graph>::edge_descriptor            Edge;
-typedef graph_traits<Graph>::out_edge_iterator          OutEdgeIt; // Iterator
+typedef	property_map<Graph, edge_capacity_t>::type		EdgeCapacityMap;
+typedef	property_map<Graph, edge_residual_capacity_t>::type	ResidualCapacityMap;
+typedef	property_map<Graph, edge_reverse_t>::type		ReverseEdgeMap;
+typedef	graph_traits<Graph>::vertex_descriptor			Vertex;
+typedef	graph_traits<Graph>::edge_descriptor			Edge;
+typedef	graph_traits<Graph>::out_edge_iterator			OutEdgeIt;
 
 
 // Custom Edge Adder Class, that holds the references
-// to the graph, capacity map, weight map and reverse edge map
-// ===============================================================
+// to the graph, capacity map and reverse edge map
+// ===================================================
 class EdgeAdder {
-    Graph &G;
-    EdgeCapacityMap &capacitymap;
-    EdgeWeightMap &weightmap;
-    ReverseEdgeMap  &revedgemap;
+	Graph &G;
+	EdgeCapacityMap	&capacitymap;
+	ReverseEdgeMap	&revedgemap;
 
 public:
-    EdgeAdder(Graph & G, EdgeCapacityMap &capacitymap, EdgeWeightMap &weightmap, ReverseEdgeMap &revedgemap)
-        : G(G), capacitymap(capacitymap), weightmap(weightmap), revedgemap(revedgemap) {}
+	// to initialize the Object
+	EdgeAdder(Graph & G, EdgeCapacityMap &capacitymap, ReverseEdgeMap &revedgemap):
+		G(G), capacitymap(capacitymap), revedgemap(revedgemap){}
 
-    void addEdge(int u, int v, long c, long w) {
-        Edge e, reverseE;
-        tie(e, tuples::ignore) = add_edge(u, v, G);
-        tie(reverseE, tuples::ignore) = add_edge(v, u, G);
-        capacitymap[e] = c;
-        weightmap[e] = w;
-        capacitymap[reverseE] = 0;
-        weightmap[reverseE] = -w;
-        revedgemap[e] = reverseE;
-        revedgemap[reverseE] = e;
-    }
+	// to use the Function (add an edge)
+	void addEdge(int from, int to, long capacity) {
+		Edge e, reverseE;
+		bool success;
+		tie(e, success) = add_edge(from, to, G);
+		tie(reverseE, success) = add_edge(to, from, G);
+		capacitymap[e] = capacity;
+		capacitymap[reverseE] = 0;
+		revedgemap[e] = reverseE;
+		revedgemap[reverseE] = e;
+	}
 };
+
 
 
 
@@ -64,65 +60,79 @@ void satellites() {
     int g, s, l;
     cin >> g >> s >> l;
 
-    vector<int> ground(l), sat(l), max_ground(g, 0), max_sat(s, 0);
-    int max_cap = 0;
-    for (int i = 0; i < l; i++) {
-        int from, to;
-        cin >> from >> to;
-        ground[i] = from; sat[i] = to;
-        max_ground[from]++; max_sat[to]++;
-        max_cap = max(max_cap, max_ground[from]);
-        max_cap = max(max_cap, max_sat[to]);
-    }
+    // vector<int> ground(l), sat(l), max_ground(g, 0), max_sat(s, 0);
+    // int max_cap = 0;
+    // for (int i = 0; i < l; i++) {
+    //     int from, to;
+    //     cin >> from >> to;
+    //     ground[i] = from; sat[i] = to;
+    //     max_ground[from]++; max_sat[to]++;
+    //     max_cap = max(max_cap, max_ground[from]);
+    //     max_cap = max(max_cap, max_sat[to]);
+    // }
 
     Graph G(g+s+2);
-    EdgeCapacityMap capacitymap = get(edge_capacity, G);
-    EdgeWeightMap weightmap = get(edge_weight, G);
-    ReverseEdgeMap revedgemap = get(edge_reverse, G);
+	EdgeCapacityMap capacitymap = get(edge_capacity, G);
+	ReverseEdgeMap revedgemap = get(edge_reverse, G);
     ResidualCapacityMap rescapacitymap = get(edge_residual_capacity, G);
-    EdgeAdder eaG(G, capacitymap, weightmap, revedgemap);
+	EdgeAdder eaG(G, capacitymap, revedgemap);
 
     Vertex src = vertex(g+s, G);
     Vertex sink = vertex(g+s+1, G);
 
-    // for (int i = 0; i < g; i++) {
-    //     eaG.addEdge(i, sink, max_ground[i], 1);
-    // }
-    // for (int i = 0; i < s; i++) {
-    //     eaG.addEdge(g+l+i, sink, max_sat[i], 1);
-    // }
-    // for (int i = 0; i < l; i++) {
-    //     eaG.addEdge(src, g+i, 1, 0);
-    //     eaG.addEdge(g+i, ground[i], 1, 0);
-    //     eaG.addEdge(g+i, g+l+sat[i], 1, 0);
-    // }
-
-
-
-
-    // Build edge connections of the graph
-    for (int i = 0; i < g; i++) {
-        eaG.addEdge(src, i, max_ground[i], 0);
-        eaG.addEdge(i, sink, max_ground[i], 1+max_cap-max_ground[i]);
-    }
-    for (int i = 0; i < s; i++) {
-        eaG.addEdge(g+i, sink, max_sat[i], 1+max_cap-max_sat[i]);
-    }
+    int from, to;
     for (int i = 0; i < l; i++) {
-        eaG.addEdge(ground[i], g+sat[i], 1, 0);
+        cin >> from >> to;
+        eaG.addEdge(from, g + to, 1);
+    }
+    for (int i = 0; i < g; i++) {
+        eaG.addEdge(src, i, 1);
+    }
+    for (int i = g; i < g + s; i++) {
+        eaG.addEdge(i, sink, 1);
     }
 
-    successive_shortest_path_nonnegative_weights(G, src, sink);
-    int cost = find_flow_cost(G);
-    int flow = 0;
-    // Iterate over all edges leaving the source to sum up the flow values.
-    OutEdgeIt e, eend;
-    for(tie(e, eend) = out_edges(vertex(src,G), G); e != eend; ++e) {
-        flow += capacitymap[*e] - rescapacitymap[*e];
-    }
-    assert(flow == l);
 
-    cout << flow << " " << cost << endl << endl;;
+    push_relabel_max_flow(G, src, sink);
+
+    // BFS to find vertex set S
+	vector<int> vis(g+s+2, false); // visited flags
+	std::queue<int> Q; // BFS queue (from std:: not boost::)
+	vis[src] = true; // Mark the source as visited
+	Q.push(src);
+	while (!Q.empty()) {
+		const int u = Q.front();
+		Q.pop();
+		OutEdgeIt ebeg, eend;
+		for (tie(ebeg, eend) = out_edges(u, G); ebeg != eend; ++ebeg) {
+			const int v = target(*ebeg, G);
+			// Only follow edges with spare capacity
+			if (rescapacitymap[*ebeg] == 0 || vis[v]) continue;
+			vis[v] = true;
+			Q.push(v);
+		}
+	}
+
+    int count_g = 0, count_s = 0;
+    vector<int> result;
+    for (int i = 0; i < g; i++) {
+        if (!vis[i]) {
+            count_g++;
+            result.push_back(i);
+        }
+    }
+    for (int i = g; i < g + s; i++) {
+        if (vis[i]) {
+            count_s++;
+            result.push_back(i - g);
+        }
+    }
+
+    cout << count_g << " " << count_s << endl;
+    for (int i = 0; i < result.size(); i++) {
+        cout << result[i] << " ";
+        if (i == result.size() - 1) cout << endl;
+    }
 
 }
 

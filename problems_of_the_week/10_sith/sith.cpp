@@ -7,8 +7,6 @@
 #include <climits>
 // BGL includes
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/strong_components.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/connected_components.hpp>
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -51,13 +49,16 @@ int get_k_planets(int t, vector<pair<P, int> >& planets, const int r, const int 
     for (Edge_iterator e = tr.finite_edges_begin(); e != tr.finite_edges_end(); e++) {
         VertexH v1 = e->first->vertex((e->second + 1) % 3);
         VertexH v2 = e->first->vertex((e->second + 2) % 3);
-        if (CGAL::squared_distance(v1->point(), v2->point()) <= r*r) {
+        double dist = CGAL::squared_distance(v1->point(), v2->point());
+        double rr = r;
+        double min_dist = rr * rr;
+        if (dist <= min_dist) {
             add_edge(v1->info(), v2->info(), G);
         }
     }
 
     // Analyze components
-    vector<int> component(num_vertices(G));
+    vector<int> component(n_not_conquered);
     int n_components = connected_components(G, &component[0]);
     vector<int> sizes(n_components, 0);
     int largest = -1;
@@ -71,9 +72,7 @@ int get_k_planets(int t, vector<pair<P, int> >& planets, const int r, const int 
 }
 
 int search_t(int begin, int end, vector<pair<P, int> >& planets, const int r, const int n) {
-    // cout << begin << " " << end;
-    if (begin == end) return get_k_planets(begin, planets, r, n);
-    else if (begin + 1 == end)
+    if (begin + 1 == end)
         return max(get_k_planets(begin, planets, r, n), get_k_planets(end, planets, r, n));
     else {
         int middle = (begin + end) / 2;
@@ -92,7 +91,8 @@ void sith() {
         cin >> x >> y;
         p[i] = make_pair(P(x, y), i);
     }
-    int t = search_t(0, n, p, r, n);
+
+    int t = search_t(0, n/2, p, r, n);
     cout << t << endl;
 
 }

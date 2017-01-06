@@ -40,13 +40,13 @@ class EdgeAdder {
     Graph &G;
     EdgeCapacityMap &capacitymap;
     EdgeWeightMap &weightmap;
-    ReverseEdgeMap &revedgemap;
+    ReverseEdgeMap  &revedgemap;
 
 public:
     EdgeAdder(Graph & G, EdgeCapacityMap &capacitymap, EdgeWeightMap &weightmap, ReverseEdgeMap &revedgemap)
         : G(G), capacitymap(capacitymap), weightmap(weightmap), revedgemap(revedgemap) {}
 
-    Edge addEdge(int u, int v, long c, long w) {
+    void addEdge(int u, int v, long c, long w) {
         Edge e, reverseE;
         tie(e, tuples::ignore) = add_edge(u, v, G);
         tie(reverseE, tuples::ignore) = add_edge(v, u, G);
@@ -56,9 +56,10 @@ public:
         weightmap[reverseE] = -w;
         revedgemap[e] = reverseE;
         revedgemap[reverseE] = e;
-        return e;
     }
 };
+
+
 
 void casino_royale() {
     int n, m, l;
@@ -67,34 +68,38 @@ void casino_royale() {
     const int MAX_PRIORITY = 1<<7;
 
     // Create Graph and Maps
-    Graph G(n+2);
+    Graph G(2*n+2);
     EdgeCapacityMap capacitymap = get(edge_capacity, G);
     EdgeWeightMap weightmap = get(edge_weight, G);
     ReverseEdgeMap revedgemap = get(edge_reverse, G);
     ResidualCapacityMap rescapacitymap = get(edge_residual_capacity, G);
     EdgeAdder eaG(G, capacitymap, weightmap, revedgemap);
-    Vertex v_source = n, v_target = n + 1;
+    Vertex src = 2*n, sink = 2*n+1;
 
-    for (int i = 0; i < n-1; i++) { eaG.addEdge(i, i+1, l, MAX_PRIORITY); }
-    eaG.addEdge(v_source, 0, l, 0);
-    eaG.addEdge(n-1, v_target, l, 0);
+    for (int i = 0; i < 2*n-1; i++) { eaG.addEdge(i, i+1, l, 0); }
 
-    // Add the missions edges
-    int x, y, q;
     for (int i = 0; i < m; i++) {
+        int x, y, q;
         cin >> x >> y >> q;
-        eaG.addEdge(x, y, 1, (MAX_PRIORITY*(y-x) - q));
+        eaG.addEdge(src, 2*x + 1, 1, MAX_PRIORITY - q);
+        eaG.addEdge(2*y, sink, 1, 0);
     }
 
-    // Find MaxFlowMinCost
-    successive_shortest_path_nonnegative_weights(G, v_source, v_target);
-    int cost = find_flow_cost(G), flow = 0;
+    // Compute flow and cost
+    successive_shortest_path_nonnegative_weights(G, src, sink);
+    int cost = find_flow_cost(G);
+    int flow = 0, f;
+
+
     OutEdgeIt e, eend;
-    for(tie(e, eend) = out_edges(vertex(v_source,G), G); e != eend; ++e) {
-        flow += capacitymap[*e] - rescapacitymap[*e];
+    for(tie(e, eend) = out_edges(vertex(src,G), G); e != eend; ++e) {
+        int f = capacitymap[*e] - rescapacitymap[*e];
+        flow += f;
+        cost -= f * MAX_PRIORITY;
     }
-    cost -= MAX_PRIORITY * (n-1) * flow;
-    cout << -cost << endl;
+    cost = -cost;
+
+    cout << cost << endl;
 
 }
 

@@ -1,69 +1,51 @@
 #include <vector>
 #include <iostream>
+#include <climits>
 
 using namespace std;
 
 
-int play(int r, int b, int n_play, int n, vector<vector<int> >& transitions, vector<vector<int> >& mem) {
-    /*  plays =
-        turn % 2 == 0  -> Sherlock's
-        turn % 2 == 1 -> Moriarty */
-    int plays = n_play % 2;
-    int turn = (n_play % 2 == 1) ? (n_play - 1) / 2 : n_play / 2;
+int max_(vector<vector<int> > &transitions, int start, int end,
+    vector<int> &min_mem, vector<int> &max_mem);
 
-    // Breaking case
-    if (r == n-1) return 0; // Sherlock has win
-    else if (b == n-1) return 1; // Moriarty has win
+int min_(vector<vector<int> > &transitions, int start, int end,
+        vector<int> &min_mem, vector<int> &max_mem) {
 
-    
-
-    if (plays == 0) {
-        // Holmes strategy
-        int meeple = (turn % 2 == 0) ? r : b;
-
-        int wining_strategy = 1;
-        for (int j = 0; j < transitions[meeple].size(); j++) {
-            int next_pos = transitions[meeple][j];
-            int w;
-            if (turn % 2 == 0) {
-                w = play(next_pos, b, n_play+1, n, transitions, mem);
-            } else {
-                w = play(r, next_pos, n_play+1, n, transitions, mem);
-            }
-            wining_strategy &= w;
-        }
-
-    } else {
-        // Moriarty strategy
-        int meeple = (turn % 2 == 0) ? b : r;
-
-        int wining_strategy = 0;
-        for (int j = 0; j < transitions[meeple].size(); j++) {
-            int next_pos = transitions[meeple][j];
-            int w;
-            if (turn % 2 == 0) {
-                w = play(r, next_pos, n_play+1, n, transitions, mem);
-            } else {
-                w = play(next_pos, b, n_play+1, n, transitions, mem);
-            }
-            wining_strategy |= w;
-        }
+    if (start == end) {
+        min_mem[start] = 0;
+        return 0;
     }
 
-
-    int h_meeple = (turn % 2 == 0) ? r : b;
-    int m_meeple = (turn % 2 == 0) ? b : r;
-
-    if (mem[turn%2][h_meeple] != -1) {
-        return mem[turn%2][h_meeple];
+    int min_dist = INT_MAX;
+    for (int v : transitions[start]) {
+        if (max_mem[v] == -1) {
+            max_(transitions, v, end, min_mem, max_mem);
+        }
+        min_dist = min(min_dist, max_mem[v]);
     }
-
-
-
-    // starting with
-
+    min_mem[start] = min_dist + 1;
+    return min_mem[start];
 }
 
+
+int max_(vector<vector<int> > &transitions, int start, int end,
+    vector<int> &min_mem, vector<int> &max_mem) {
+
+    if (start == end) {
+        max_mem[start] = 0;
+        return 0;
+    }
+
+    int max_dist = 0;
+    for (int v : transitions[start]) {
+        if (min_mem[v] == -1) {
+            min_(transitions, v, end, min_mem, max_mem);
+        }
+        max_dist = max(max_dist, min_mem[v]);
+    }
+    max_mem[start] = max_dist + 1;
+    return max_mem[start];
+}
 
 void great_game() {
     int n, m;
@@ -73,7 +55,7 @@ void great_game() {
     // set to 0-index
     r--; b--;
 
-    vector<vector<int> > transitions(n, vector<int>(0));
+    vector<vector<int> > transitions(n);
     for (int i = 0; i < m; i++) {
         int u, v;
         cin >> u >> v;
@@ -82,10 +64,13 @@ void great_game() {
         transitions[u].push_back(v);
     }
 
-    // Create memory vector
-    vector<vector<vector<int> > > mem(2, vector<vector<int> >(2, vector<int>(n, -1)));
+    // Create memory vectors
+    vector<int> min_mem(n, -1), max_mem(n, -1);
 
+    int red_moves = min_(transitions, r, n-1, min_mem, max_mem);
+    int black_moves = min_(transitions, b, n-1, min_mem, max_mem);
 
+    cout << (black_moves < red_moves || ((black_moves) == red_moves && black_moves % 2 == 0)) << endl;
 
 
 }

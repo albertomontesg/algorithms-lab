@@ -5,7 +5,7 @@
 CC=g++-4.9
 
 # Flags
-DEBUG_FLAGS=-Wall -O3 -g -std=c++11
+DEBUG_FLAGS=-O3 -std=c++11
 
 # File locations
 BASENAME=bobs_burden

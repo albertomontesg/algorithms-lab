@@ -60,17 +60,6 @@ void satellites() {
     int g, s, l;
     cin >> g >> s >> l;
 
-    // vector<int> ground(l), sat(l), max_ground(g, 0), max_sat(s, 0);
-    // int max_cap = 0;
-    // for (int i = 0; i < l; i++) {
-    //     int from, to;
-    //     cin >> from >> to;
-    //     ground[i] = from; sat[i] = to;
-    //     max_ground[from]++; max_sat[to]++;
-    //     max_cap = max(max_cap, max_ground[from]);
-    //     max_cap = max(max_cap, max_sat[to]);
-    // }
-
     Graph G(g+s+2);
 	EdgeCapacityMap capacitymap = get(edge_capacity, G);
 	ReverseEdgeMap revedgemap = get(edge_reverse, G);

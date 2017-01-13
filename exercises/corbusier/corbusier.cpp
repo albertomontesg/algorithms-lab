@@ -1,79 +1,37 @@
 #include <vector>
 #include <iostream>
 
-// BGL includes
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/push_relabel_max_flow.hpp>
-#include <boost/tuple/tuple.hpp>
-// Namespaces
 using namespace std;
-using namespace boost;
-
-// BGL Graph definitions
-// =====================
-// Graph Type with nested interior edge properties for Flow Algorithms
-typedef	adjacency_list_traits<vecS, vecS, directedS> Traits;
-typedef adjacency_list<vecS, vecS, directedS, no_property,
-	property<edge_capacity_t, long,
-		property<edge_residual_capacity_t, long,
-			property<edge_reverse_t, Traits::edge_descriptor> > > >	Graph;
-// Interior Property Maps
-typedef	property_map<Graph, edge_capacity_t>::type		    EdgeCapacityMap;
-typedef	property_map<Graph, edge_residual_capacity_t>::type	ResidualCapacityMap;
-typedef	property_map<Graph, edge_reverse_t>::type		    ReverseEdgeMap;
-typedef	graph_traits<Graph>::vertex_descriptor			    Vertex;
-typedef	graph_traits<Graph>::edge_descriptor			    Edge;
-typedef	graph_traits<Graph>::out_edge_iterator              OutEdgeIt;
-
-// Custom Edge Adder Class, that holds the references
-// to the graph, capacity map and reverse edge map
-// ===================================================
-class EdgeAdder {
-	Graph &G;
-	EdgeCapacityMap	&capacitymap;
-	ReverseEdgeMap	&revedgemap;
-
-public:
-	// to initialize the Object
-	EdgeAdder(Graph & G, EdgeCapacityMap &capacitymap, ReverseEdgeMap &revedgemap):
-		G(G), capacitymap(capacitymap), revedgemap(revedgemap){}
-
-	// to use the Function (add an edge)
-	void addEdge(int from, int to, long capacity) {
-		Edge e, reverseE;
-		bool success;
-		tie(e, success) = add_edge(from, to, G);
-		tie(reverseE, success) = add_edge(to, from, G);
-		capacitymap[e] = capacity;
-		capacitymap[reverseE] = 0;
-		revedgemap[e] = reverseE;
-		revedgemap[reverseE] = e;
-	}
-};
 
 void corbusier() {
     int n, i, k;
     cin >> n >> i >> k;
 
-    vector<long> disk(n);
-    for (int j = 0; j < n; j++) cin >> disk[j];
+    vector<int> disks(n);
+	vector<vector<bool> > T(n, vector<bool>(k, false));
 
-    bool solution = false;
-    for (int j = 1; j < 1<<n; j++) {
-        long count = 0;
-        for (int p = 0; p < n; p++) {
-            if (j & (1<<p)) {
-                count += disk[p];
-            }
-        }
-        if (count % k == i) {
-            solution = true;
-            break;
-        }
-    }
+    for (int j = 0; j < n; j++) cin >> disks[j];
 
-    if (solution) cout << "yes" << endl;
-    else cout << "no" << endl;
+	int h;
+	for (int d = 0; d < n; d++) {
+		h = disks[d];
+
+        T[d][h%k] = true;
+		if (d > 0) {
+			for (int j = 0; j < k; j++) {
+				if (T[d-1][j]) {
+                    T[d][j] = true;
+					T[d][(j+h)%k] = true;
+				}
+			}
+		}
+
+		if (T[d][i]) {
+			cout << "yes\n";
+			return;
+		}
+	}
+	cout << "no\n";
 }
 
 

@@ -1,6 +1,5 @@
 #include <vector>
-#include <queue>
-#include <iostream>
+ #include <iostream>
 
 using namespace std;
 
@@ -26,7 +25,10 @@ void light_pattern() {
     cout << endl;
 
     /*
-    Go through the blocks from left to right. Is there a recursive relationship between the number of operations needed to get blocks 1..i to have the right patterns and the number of operations needed to get blocks 1..i-1 to have the right patterns. If so, you could do DP. If not, why not, and how could it be fixed? This should point you into the right direction.
+    Go through the blocks from left to right. Is there a recursive relationship between the number
+    of operations needed to get blocks 1..i to have the right patterns and the number of operations
+    needed to get blocks 1..i-1 to have the right patterns. If so, you could do DP. If not, why
+    not, and how could it be fixed? This should point you into the right direction.
     */
 
 

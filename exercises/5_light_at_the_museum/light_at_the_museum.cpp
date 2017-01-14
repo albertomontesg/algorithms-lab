@@ -1,11 +1,41 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <climits>
 
 using namespace std;
 
-typedef pair<int, int>      pair_int;
+typedef pair<int, int>                      pair_int;
+typedef vector<vector<int> >                vecvec;
+typedef vector<pair<vector<int>,int> >      vecpairvec;
 
+
+void create_subset(vecvec& state_on, vecvec& state_off, vecpairvec& F, int dbound, int ubound) {
+    int N = ubound - dbound;
+    int M = state_on[0].size();
+    for (int k = 0; k < 1<<N; k++) {
+        vector<int> tuple(M, 0);
+        int count = 0;
+
+        for (int i = 0; i < N; i++) {
+            bool changed_state = (k & 1<<i) != 0;
+            if (changed_state) count++;
+
+            for (int j = 0; j < M; j++)
+                tuple[j] += (changed_state) ? state_off[i+dbound][j] : state_on[i+dbound][j];
+        }
+        F.push_back(make_pair(tuple, count));
+    }
+}
+
+struct Comp {
+    bool operator() (pair<vector<int>, int> P, vector<int> V) {
+        return P.first < V;
+    }
+    bool operator() (vector<int> V, pair<vector<int>, int> P) {
+        return V < P.first;
+    }
+};
 
 void light_at_the_museum() {
     int N, M; cin >> N >> M;
@@ -18,69 +48,30 @@ void light_at_the_museum() {
         for (int i = 0; i < M; i++) cin >> state_on[j][i] >> state_off[j][i];
 
 
-    // Try to reduce the runtime from (N*M*2^N) to (K*2^(N/2))
-    // Approach of two subsets to obtain the same sum
-    int N_1 = N / 2;
-    int N_2 = N - N_1;
-    vector<vector<int> > S_1(N_1, vector<int>(M, 0));
-    vector<vector<int> > S_2(N_2, vector<int>(M, 0));
-    vector<int> A_1(N_1);
-    vector<int> A_2(N_2);
+    // Create all combinations for two subsets (divide and list)
+    vecpairvec F1, F2;
+    create_subset(state_on, state_off, F1, 0, N/2);
+    create_subset(state_on, state_off, F2, N/2, N);
+    sort(F2.begin(), F2.end());
 
-    // Create subset of sums for S1
-    for (int k = 0; k < 1<<N_1; k++) {
-        int count = 0;
-        for (int i = 0; i < N_1; i++) {
-            bool state_n = (k & 1<<i) != 0;
-            if (state_n) count++;
-            for (int j = 0; j < M; j++) {
-                if (state_n) S_1[k][j] += state_off[i][j];
-                else S_1[k][j] += state_on[i][j];
-            }
+    int min_changes = INT_MAX;
+    for (int idx = 0; idx < F1.size(); idx++) {
+        vector<int> missing = F1[idx].first;
+        for (int i = 0; i < M; i++) {
+            missing[i] = brightness[i] - missing[i];
         }
-        A_1[k] = count;
-    }
-    // Create subset of sums for S1
-    for (int k = 0; k < 1<<N_2; k++) {
-        int count = 0;
-        for (int i = 0; i < N_2; i++) {
-            bool state_n = (k & 1<<i) != 0;
-            if (state_n) count++;
-            for (int j = 0; j < M; j++) {
-                if (state_n) S_2[k][j] += state_off[N_1+i][j];
-                else S_2[k][j] += state_on[N_1+i][j];
-            }
+
+        pair<vecpairvec::iterator, vecpairvec::iterator>  it_pair;
+        it_pair = equal_range(F2.begin(), F2.end(), missing, Comp());
+
+        for (auto it = it_pair.first; it != it_pair.second; it++) {
+            int count = it->second + F1[idx].second;
+            min_changes = min(min_changes, count);
         }
-        A_2[k] = count;
     }
 
-
-    //
-    // bool result = false;
-    // int min_switches = N;
-    // for (int k = 0; k < 1<<N; k++) {
-    //     vector<int> accum(brightness);
-    //     int count = 0;
-    //     for (int i = 0; i < N; i++) {
-    //         bool state_m = (k & 1<<i) != 0;
-    //         if (state_m) count++;
-    //         for (int j = 0; j < M; j++) {
-    //             if (state_m) {
-    //                 accum[j] -= state_off[i][j];
-    //             } else {
-    //                 accum[j] -= state_on[i][j];
-    //             }
-    //         }
-    //     }
-    //     if (all_of(accum.begin(), accum.end(), [](int i){ return i == 0; })) {
-    //         result = true;
-    //         min_switches = min(min_switches, count);
-    //     }
-    // }
-    //
-    // if (result) cout << min_switches << endl;
-    // else cout << "impossible\n";
-
+    if (min_changes == INT_MAX) cout << "impossible\n";
+    else cout << min_changes << endl;
 }
 
 int main() {

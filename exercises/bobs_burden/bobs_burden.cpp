@@ -29,65 +29,58 @@ void bobs_burden() {
     int k; cin >> k;
 
     int N = k * (k+1) / 2;
-    Graph G(k*(k+1));
+    Graph G(2 * N);
 	WeightMap weightmap = get(edge_weight, G);
 
-    int pos, v;
+    int pos_in, pos_out, v;
     Edge e; bool success;
     for (int i = 0; i < k; i++) {
         for (int j = 0; j <= i; j++) {
-            pos = i * (i + 1) / 2 + j;
+            pos_in = i * (i + 1) / 2 + j;
+			pos_out = pos_in + N;
             cin >> v;
-            tie(e, success) = add_edge(N + pos, pos, G);
+            tie(e, success) = add_edge(pos_in, pos_out, G);
             weightmap[e] = v;
-            if (j > 0 && i > 0) {
-                tie(e, success) = add_edge(pos, N + pos - 1, G);
-                weightmap[e] = 0;
-                tie(e, success) = add_edge(pos - 1, N + pos, G);
-                weightmap[e] = 0;
+            if (j > 0) {
+				int pos_left_in = pos_in - 1, pos_left_out = pos_out - 1;
+                add_edge(pos_left_out, pos_in, G);
+                add_edge(pos_out, pos_left_in, G);
             }
             if (i < k - 1) {
-                tie(e, success) = add_edge(pos, N + pos + i + 1, G);
-                weightmap[e] = 0;
-                tie(e, success) = add_edge(pos + i + 1, N + pos, G);
-                weightmap[e] = 0;
-                tie(e, success) = add_edge(pos, N + pos + i + 2, G);
-                weightmap[e] = 0;
-                tie(e, success) = add_edge(pos + i + 2, N + pos, G);
-                weightmap[e] = 0;
+				int pos_down_left_in = pos_in + (i + 1);
+				int pos_down_left_out = pos_down_left_in + N;
+				int pos_down_right_in = pos_down_left_in + 1;
+				int pos_down_right_out = pos_down_right_in + N;
+                add_edge(pos_out, pos_down_left_in, G);
+                add_edge(pos_down_left_out, pos_in, G);
+                add_edge(pos_out, pos_down_right_in, G);
+                add_edge(pos_down_right_out, pos_in, G);
             }
         }
     }
 
     vector<vector<int> > distmap(3, vector<int>(N*2));
     // Compute the distance map for the three point (0,0), (k,0), (k,k)
-    dijkstra_shortest_paths(G, 0,
-        predecessor_map(make_iterator_property_map(distmap[0].begin(), get(vertex_index, G))));
-    dijkstra_shortest_paths(G, (k - 1) * (k - 2) / 2,
-        predecessor_map(make_iterator_property_map(distmap[1].begin(), get(vertex_index, G))));
-    dijkstra_shortest_paths(G, N - 1,
-        predecessor_map(make_iterator_property_map(distmap[2].begin(), get(vertex_index, G))));
+    dijkstra_shortest_paths(G, N,
+        distance_map(make_iterator_property_map(distmap[0].begin(), get(vertex_index, G))));
+    dijkstra_shortest_paths(G, 2*N - k,
+        distance_map(make_iterator_property_map(distmap[1].begin(), get(vertex_index, G))));
+    dijkstra_shortest_paths(G, 2*N - 1,
+        distance_map(make_iterator_property_map(distmap[2].begin(), get(vertex_index, G))));
 
     int minimum_burden = INT_MAX;
     for (int i = 0; i < k; i++) {
         for (int j = 0; j <= i; j++) {
-            pos = i * (i + 1) / 2 + j;
-            if (pos == 0 || pos == (k - 1) * (k - 2) / 2 || pos == N -1) continue;
-            tie(e, success) = edge(N+pos, pos, G);
+            pos_in = i * (i + 1) / 2 + j;
+            if (pos_in == 0 || pos_in == N - k || pos_in == N -1)
+				continue;
+            tie(e, success) = edge(pos_in, pos_in+N, G);
             minimum_burden = min(minimum_burden,
-                distmap[0][N+pos] + distmap[1][N+pos] + distmap[2][N+pos] + weightmap[e]);
+                distmap[0][pos_in] + distmap[1][pos_in] + distmap[2][pos_in] + weightmap[e]);
         }
     }
 
     cout << minimum_burden << endl;
-
-    // vector<Vertex> predmap(V);	// We will use this vector as an Exterior Property Map: Vertex -> Dijkstra Predecessor
-	// vector<int> distmap(V);		// We will use this vector as an Exterior Property Map: Vertex -> Distance to source
-	// Vertex start = 0;
-	// dijkstra_shortest_paths(G, start, // We MUST provide at least one of the two maps
-	// 	predecessor_map(make_iterator_property_map(predmap.begin(), get(vertex_index, G))).	// predecessor map as Named Parameter
-	// 	distance_map(make_iterator_property_map(distmap.begin(), get(vertex_index, G))));	// distance map as Named Parameter
-
 
 }
 

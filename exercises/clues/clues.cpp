@@ -6,110 +6,92 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/connected_components.hpp>
-
 using namespace std;
-using namespace boost;
 
-// BGL typedefs
-typedef adjacency_list<vecS, vecS, undirectedS, no_property, no_property>   Graph;
-typedef graph_traits<Graph>::edge_descriptor                                Edge;
-typedef graph_traits<Graph>::vertex_descriptor                              Vertex;
 // CGAL typedefs
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
-typedef CGAL::Triangulation_vertex_base_with_info_2<unsigned, K>    Vb;
+typedef pair<int, bool>                                             info_t;
+typedef CGAL::Triangulation_vertex_base_with_info_2<info_t, K>      Vb;
 typedef CGAL::Triangulation_data_structure_2<Vb>                    Tds;
 typedef CGAL::Delaunay_triangulation_2<K, Tds>                      Triangulation;
 typedef Triangulation::Finite_faces_iterator                        FaceIt;
 typedef Triangulation::Edge_iterator                                EdgeIt;
 typedef Triangulation::Face_handle                                  FaceH;
 typedef Triangulation::Vertex_handle                                VertexH;
+typedef Triangulation::Vertex_circulator                            VertexCirculator;
 typedef K::Point_2                                                  Point;
 typedef K::Segment_2                                                Segment;
 typedef K::Triangle_2                                               Triangle;
 
 
+bool has_interference(Triangulation const & trg, K::FT const & rr) {
+    for (auto e = trg.finite_edges_begin(); e != trg.finite_edges_end(); e++)
+        if (trg.segment(*e).squared_length() <= rr) return true;
+    return false;
+}
+
+bool try_two_colors(Triangulation & trg, K::FT const & rr) {
+    for (auto v = trg.finite_vertices_begin(); v != trg.finite_vertices_end(); v++)
+        v->info() = { 0, false };
+
+    int components = 0;
+    Triangulation trg0, trg1;
+    for (auto v = trg.finite_vertices_begin(); v != trg.finite_vertices_end(); v++) {
+        if (v->info().first == 0) {
+            v->info().first = ++components;
+            vector<VertexH> stack(1, v);
+            do {
+                VertexH h = stack.back();
+                stack.pop_back();
+                VertexCirculator c = trg.incident_vertices(h);
+                do if (!trg.is_infinite(c) && CGAL::squared_distance(h->point(), c->point()) <= rr) {
+                    if (c->info() == h->info()) return false;
+                    if (c->info().first == 0) {
+                        stack.push_back(c);
+                        c->info() = { components, !h->info().second };
+                    }
+                } while (++c != trg.incident_vertices(h));
+            } while (!stack.empty());
+        }
+
+        if (v->info().second) trg1.insert(v->point());
+        else trg0.insert(v->point());
+    }
+
+    return !has_interference(trg0, rr) && !has_interference(trg1, rr);
+}
+
 void clues() {
     int n, m, r;
     cin >> n >> m >> r;
+    K::FT rr(r*r);
 
-    vector<pair<Point, unsigned> > s; s.reserve(n);
-    vector<Point> a(m), b(m);
-    long x, y;
-    for (int i = 0; i < n; i++) {
-        cin >> x >> y;
-        s.push_back(make_pair(Point(x, y), i));
-    }
+    vector<Point> stations(n);
+    for (int i = 0; i < n; i++) cin >> stations[i];
+
+    Triangulation trg;
+    trg.insert(stations.begin(), stations.end());
+    bool success = try_two_colors(trg, rr);
+
     for (int i = 0; i < m; i++) {
-        cin >> x >> y; a[i] = Point(x, y);
-        cin >> x >> y; b[i] = Point(x, y);
-    }
+        Point holmes, watson;
+        cin >> holmes >> watson;
 
-    // Define the triangulation
-    Triangulation t;
-    t.insert(s.begin(), s.end());
-    FaceIt ft; bool interference = false;
+        if (success) {
+            if (CGAL::squared_distance(holmes, watson) <= rr) {
+                cout << "y"; continue;
+            }
 
-    // Define the graph
-    Graph G(n);
-    Edge e; bool success;
-
-    // Iterate over all faces and see how many of triangles, all the edges are shorter than r so
-    // interferance is caused
-    EdgeIt ei;
-    map<Edge, bool> edge_seen;
-    VertexH vh_a, vh_b;
-    for (ft = t.finite_faces_begin(); ft != t.finite_faces_end(); ft++) {
-        int count = 0;
-        for (int j = 0; j < 3; j++) {
-            vh_a = ft->vertex(j); vh_b = ft->vertex((j+1)%3);
-            K::FT d = CGAL::squared_distance(vh_a->point(), vh_b->point());
-            if ( d <= r*r ) {
-                tie(e, success) = add_edge(vh_a->info(), vh_b->info(), G);
-                count++;
+            auto holmes_station = trg.nearest_vertex(holmes);
+            auto watson_station = trg.nearest_vertex(watson);
+            if (holmes_station->info().first == watson_station->info().first &&
+                CGAL::squared_distance(holmes_station->point(), holmes) <= rr &&
+                CGAL::squared_distance(watson_station->point(), watson) <= rr)
+            {
+                cout << "y"; continue;
             }
         }
-        if (count > 2) interference = true;
-    }
-    // In the case the triangulation doesn't make any finite triangle (1 or 2 vertex)
-    if (n == 2) {
-        // Only with two vertex is required to create an edge at the graph only if the distance
-        // is enough
-        if ( CGAL::squared_distance(s[0].first, s[1].first) <= r*r )
-            tie(e, success) = add_edge(0, 1, G);
-    }
-
-    // Compute the connected components
-    vector<int> component(n);
-    connected_components(G, &component[0]);
-
-    int v_a, v_b, d_a, d_b, d_ab;
-    for (int i = 0; i < m; i++) {
-        // Check the interferance previously computed from the triangulation
-        if ( interference ) {
-            cout << "n";
-            continue;
-        }
-
-        // Search the nearest nodes to connect from a_i to b_i
-        v_a = t.nearest_vertex(a[i])->info();
-        v_b = t.nearest_vertex(b[i])->info();
-        // Compute the distances to check reachability
-        d_a = CGAL::squared_distance(s[v_a].first, a[i]);
-        d_b = CGAL::squared_distance(s[v_b].first, b[i]);
-        d_ab = CGAL::squared_distance(a[i], b[i]);
-        if ( d_ab <= r*r ) {
-            cout << "y";
-            continue;
-        } else if ( d_a > r*r || d_b > r*r ) {
-            cout << "n";
-            continue;
-        }
-
-        // Now check if the nodes which are connected a and b are in the same graph component
-        if (component[v_a] == component[v_b]) cout << "y";
-        else cout << "n";
+        cout << "n";
     }
     cout << endl;
 
@@ -117,6 +99,7 @@ void clues() {
 
 
 int main() {
+    ios_base::sync_with_stdio(false);
     int T; cin >> T;
     for (int t = 0; t < T; t++) {
         clues();

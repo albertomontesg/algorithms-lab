@@ -39,19 +39,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /usr/local/Cellar/cmake/3.7.1/bin/cmake
+CMAKE_COMMAND = /usr/local/Cellar/cmake/3.7.2/bin/cmake
 
 # The command to remove a file.
-RM = /usr/local/Cellar/cmake/3.7.1/bin/cmake -E remove -f
+RM = /usr/local/Cellar/cmake/3.7.2/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/Alberto/Documents/UniversidadETH/Courses/AlgorithmsLab/code/problems_of_the_week/4_theev
+CMAKE_SOURCE_DIR = /Users/alberto/Documents/Education/3_UniversityETHZ/Courses/AlgorithmsLab/code/exercises/theev
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/Alberto/Documents/UniversidadETH/Courses/AlgorithmsLab/code/problems_of_the_week/4_theev
+CMAKE_BINARY_DIR = /Users/alberto/Documents/Education/3_UniversityETHZ/Courses/AlgorithmsLab/code/exercises/theev
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /Users/Alberto/Documents/UniversidadETH/Courses/AlgorithmsLab
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/local/Cellar/cmake/3.7.1/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/usr/local/Cellar/cmake/3.7.2/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -70,7 +70,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/local/Cellar/cmake/3.7.1/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/usr/local/Cellar/cmake/3.7.2/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/Alberto/Documents/UniversidadETH/Courses/AlgorithmsLab/code/problems_of_the_week/4_theev/CMakeFiles /Users/Alberto/Documents/UniversidadETH/Courses/AlgorithmsLab/code/problems_of_the_week/4_theev/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/alberto/Documents/Education/3_UniversityETHZ/Courses/AlgorithmsLab/code/exercises/theev/CMakeFiles /Users/alberto/Documents/Education/3_UniversityETHZ/Courses/AlgorithmsLab/code/exercises/theev/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/Alberto/Documents/UniversidadETH/Courses/AlgorithmsLab/code/problems_of_the_week/4_theev/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/alberto/Documents/Education/3_UniversityETHZ/Courses/AlgorithmsLab/code/exercises/theev/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

@@ -1,4 +1,12 @@
-
+/*
+The algorithm to solve this problem consist in using the Interval Scheduling to place the maximum
+number of jedis along the perimeter. The problem begins when the range is continuosly cyncling so
+there is no reference point to start. The best point to use it, is the one with less jedis covering it (for the first two testsets there is ensure at least one segment without covering and on the last
+testset there is at least one with at most 10 jedis). This segment with minimum jedis covering
+should be found and then apply from there the Interval Scheduling algorithm for all combinations of
+starting points (none segment is cutting the starting point, or picking each of the segments that
+is cutting the starting point and take the best result).
+*/
 #include <iostream>
 #include <vector>
 #include <map>

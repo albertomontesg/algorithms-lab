@@ -57,7 +57,6 @@ void do_even_count_matrices(){
     }
 
     cout << counter << endl;
-
 }
 
 int main() {

@@ -74,15 +74,12 @@ void evolution() {
     vector<int> result(q);
     dfs(root, tree, path, query, result, age);
 
-
-
     // Output result
     for (int i = 0; i < q; i++) {
         cout << species[result[i]];
         if ( i < q - 1 ) cout << " ";
     }
     cout << endl;
-
 }
 
 int main() {

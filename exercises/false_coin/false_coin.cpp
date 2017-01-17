@@ -27,6 +27,8 @@ void test_false_coin() {
 
         char comparison; cin >> comparison;
 
+        // For each trial eliminate all the possible candidates depending where on the balance
+        // appear
         for (int j = 0; j < n; j++) {
             switch (comparison) {
                 case '=': {
@@ -89,6 +91,7 @@ void test_false_coin() {
             coin_id = i + 1;
         }
     }
+    // If there is more than one candidate there is not an unique solution
     if (count_candidates > 1) {
         coin_id = 0;
     }

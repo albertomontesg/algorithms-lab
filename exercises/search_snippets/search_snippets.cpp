@@ -3,7 +3,6 @@ Implementation sliding window.
 Hint: to improve the efficiency, instead of loop along all the appearance vector to see if all the
 words appear, keep up a counter and changing it with conditions. It is much more efficient and clean
 */
-
 #include <vector>
 #include <iostream>
 #include <algorithm>
@@ -43,7 +42,7 @@ void search_snippets() {
     int min_d = w[t-1].position - w[0].position + 1;
     int s = 0, e = 0, u = n; // start, end, and uncovered counter
     a[w[s].id]++; u--;
-
+    // Sliding Window
     while (e != t) {
         while (e < t - 1 && u > 0) {
             e++;

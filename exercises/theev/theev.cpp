@@ -6,9 +6,8 @@
 #include <vector>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel   K;
-typedef K::Point_2                                         P;
-typedef K::Point_2                                         P;
-typedef CGAL::Min_circle_2_traits_2<K>                     Traits;
+typedef K::Point_2                                          P;
+typedef CGAL::Min_circle_2_traits_2<K>                      Traits;
 typedef CGAL::Min_circle_2<Traits>                          Min_circle;
 
 using namespace std;
@@ -94,9 +93,7 @@ void theev() {
     K::FT result = min(rad_1, rad_2);
 
     cout << ceil_to_double(result) << endl;
-
 }
-
 
 int main() {
     int t; cin >> t;

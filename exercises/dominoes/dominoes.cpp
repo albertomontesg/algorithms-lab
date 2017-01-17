@@ -7,7 +7,7 @@ void compute_dominoes_falling(){
     int n; cin >> n;
     vector<unsigned long int> dominoes_height(n);
     for (int i =0; i < n; i++)
-        cin >> dominoes_height [i];
+        cin >> dominoes_height[i];
 
     int max = 1;
 

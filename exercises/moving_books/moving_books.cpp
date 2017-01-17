@@ -6,7 +6,6 @@
 using namespace std;
 
 
-
 void moving_books() {
     long n; cin >> n;
     long m; cin >> m;
@@ -27,7 +26,6 @@ void moving_books() {
         return;
     }
 
-
     multiset<int, greater<int> > ws;
     sort(s.begin(), s.end(), greater<int>());
 
@@ -46,7 +44,6 @@ void moving_books() {
     }
 
     cout << 3*r-1 << endl;
-
 }
 
 int main() {

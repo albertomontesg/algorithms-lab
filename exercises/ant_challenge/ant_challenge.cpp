@@ -49,7 +49,8 @@ void graphs() {
     Graph G;
     WeightMap weightmap = get(edge_weight, G);
 
-    // For every specie compute the Prim shortest path and then add the edges into a global graph
+    // For every specie compute the Prim Minimum Spanning Tree and then add the edges into a global
+    // graph
     for (int i = 0; i < s; i++) {
         int v; cin >> v;
         vector<Vertex> primpredmap(n);
@@ -84,7 +85,6 @@ void graphs() {
     );
 
     cout << distmap[end] << endl;
-
 }
 
 int main() {

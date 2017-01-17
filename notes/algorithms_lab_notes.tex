@@ -1,0 +1,496 @@
+\documentclass[10pt,a4paper,twoside]{report}
+\usepackage[a4paper,inner=1.5cm,outer=1.5cm,top=1cm,bottom=1cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{makeidx}
+\usepackage{listings}
+\usepackage{color}
+% \usepackage[columns=3]{idxlayout}
+
+\setcounter{secnumdepth}{2}
+
+\newcommand{\BigO}[1]{\ensuremath{\operatorname{O}\bigl(#1\bigr)}}
+\newcommand{\sectionbreak}{\clearpage}
+\providecommand{\keywords}[1]{\textbf{\textit{Keywords---}} #1}
+
+\definecolor{codegreen}{rgb}{0.72,0.62,0.45}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{1,1,1}
+\definecolor{codeorange}{rgb}{0.85,0.59,0.41}
+
+\lstset{
+	language=C++,
+	numbers=left,
+	backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegray},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codeorange},
+    stringstyle=\color{codegreen},
+	tabsize=4,
+	frame=single,
+	breaklines=true,
+	showstringspaces=false,
+	basicstyle=\footnotesize\ttfamily,
+	emph={label},
+	xleftmargin=10pt,
+	framexleftmargin=0pt,
+	framexrightmargin=5pt,
+	framexbottommargin=4pt,
+}
+
+\makeindex
+
+\title{Algorithms Lab}
+\author{
+    Alberto Montes \\
+    \textit{malberto@student.ethz.ch}
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\chapter{Fundamentals}
+
+\section{Introduction}
+
+\subsection*{Build the sum}
+\begin{keywords}\end{keywords}
+\lstinputlisting{../exercises/build_the_sum/buildthesum.cpp}
+
+
+\newpage
+\subsection*{Even Pairs}
+\begin{keywords}Precompute\end{keywords}
+\index{Tricks!Precompute}
+\lstinputlisting{../exercises/even_pairs/even_pairs.cpp}
+
+\newpage
+\subsection*{Dominoes}
+\begin{keywords}\end{keywords}
+\lstinputlisting{../exercises/dominoes/dominoes.cpp}
+
+\newpage
+\subsection*{Even Matrices}
+\begin{keywords}Precompute\end{keywords}
+\index{Tricks!Precompute}
+\lstinputlisting{../exercises/even_matrices/even_matrices.cpp}
+
+\newpage
+\subsection*{False Coin}
+\begin{keywords}Tree Search\end{keywords}
+\index{Tricks!Tree Search}
+\lstinputlisting{../exercises/false_coin/false_coin.cpp}
+
+\newpage
+\subsection*{Deck of Cards}
+\begin{keywords}Sliding Window\end{keywords}
+\index{Sliding Window}
+\lstinputlisting{../exercises/deck_of_cards/deck_of_cards.cpp}
+
+\newpage
+\section{Binary Search, Sliding Window, Graph Traversals, Greedy}
+
+\subsection*{Search Snippets}
+\begin{keywords}Sliding Window\end{keywords}
+\index{Sliding Window}
+\lstinputlisting{../exercises/search_snippets/search_snippets.cpp}
+
+\newpage
+\subsection*{Boats}
+\begin{keywords}Interval Scheduling\end{keywords}
+\index{Greedy!Interval Scheduling}
+\lstinputlisting{../exercises/boats/boats.cpp}
+
+\newpage
+\subsection*{Moving Books}
+\begin{keywords}Greedy\end{keywords}
+\index{Greedy}
+\lstinputlisting{../exercises/moving_books/moving_books.cpp}
+
+\newpage
+\subsection*{Evolution}
+\begin{keywords}DFS, Binary Search\end{keywords}
+\index{DFS}
+\index{Binary Search}
+\lstinputlisting{../exercises/evolution/evolution.cpp}
+
+\newpage
+\subsection*{Octopussy}
+\begin{keywords}Greedy\end{keywords}
+\index{Greedy}
+\lstinputlisting{../exercises/octopussy/octopussy.cpp}
+
+
+\newpage
+\section{CGAL}
+
+\subsection*{Hit}
+\begin{keywords}Intersection\end{keywords}
+\index{Geometry!Intersection}
+\lstinputlisting{../exercises/hit/hit.cpp}
+
+\newpage
+\subsection*{First Hit}
+\begin{keywords}Intersection\end{keywords}
+\index{Geometry!Intersection}
+\lstinputlisting{../exercises/firsthit/firsthit.cpp}
+
+\newpage
+\subsection*{Hiking Maps}
+\begin{keywords}Triangle Contains, Sliding Window\end{keywords}
+\index{Geometry!Triangle Contains}
+\index{Sliding Window}
+\lstinputlisting{../exercises/hiking_maps/hiking_maps.cpp}
+
+\newpage
+\subsection*{Antenna}
+\begin{keywords}Minimum Circle\end{keywords}
+\index{Geometry!Minimum Circle}
+\lstinputlisting{../exercises/antenna/antenna.cpp}
+
+\newpage
+\subsection*{Attack of the Clones}
+\begin{keywords}Interval Scheduling\end{keywords}
+\index{Greedy!Interval Scheduling}
+\lstinputlisting{../exercises/attack_clones/attack_clones.cpp}
+
+
+\newpage
+\section{BGL}
+
+\subsection*{First Steps BGL}
+\begin{keywords}Minimum Spanning Tree, Dijkstra Shortest Path\end{keywords}
+\index{Graphs!Minimum Spanning Tree}
+\index{Graphs!Dijkstra Shortest Path}
+\lstinputlisting{../exercises/graphs/graphs.cpp}
+
+\newpage
+\subsection*{Ant Challenge}
+\begin{keywords}Minimum Spanning Tree, Dijkstra Shortest Path\end{keywords}
+\index{Graphs!Minimum Spanning Tree}
+\index{Graphs!Dijkstra Shortest Path}
+\lstinputlisting{../exercises/ant_challenge/ant_challenge.cpp}
+
+\newpage
+\subsection*{Important Bridges}
+\begin{keywords}Biconnected Components\end{keywords}
+\index{Graphs!Biconnected Components}
+\lstinputlisting{../exercises/important_bridges/important_bridges.cpp}
+
+\newpage
+\subsection*{Buddy Selection}
+\begin{keywords}Maximum Cardinality Matching\end{keywords}
+\index{Graphs!Maximum Cardinality Matching}
+\lstinputlisting{../exercises/buddy_selection/buddy_selection.cpp}
+
+\newpage
+\subsection*{TheeV}
+\begin{keywords}Binary Search, Minimum Circle\end{keywords}
+\index{Geometry!Minimum Circle}
+\index{Binary Search}
+\lstinputlisting{../exercises/theev/theev.cpp}
+
+
+
+\chapter{Advanced Algorithms}
+
+\section{Dynamic Programming, Brute Force, Split and List}
+
+\subsection*{Burning Coins}
+\begin{keywords}Dynamic Programming\end{keywords}
+\index{Dynamic Programming}
+\lstinputlisting{../exercises/burning_coins/burning_coins.cpp}
+
+\newpage
+\subsection*{Light Pattern}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/light_pattern/light_pattern.cpp}
+
+\newpage
+\subsection*{Light at the Museum}
+\begin{keywords}Dynamic Programming, Split and List\end{keywords}
+\index{Dynamic Programming!Split and List}
+\lstinputlisting{../exercises/light_at_the_museum/light_at_the_museum.cpp}
+
+\newpage
+\subsection*{The Great Game}
+\begin{keywords}Dynamic Programming\end{keywords}
+\index{Dynamic Prgramming}
+\lstinputlisting{../exercises/great_game/great_game.cpp}
+
+\newpage
+\subsection*{On Her Majesty's Secret Service}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/avalanche/avalanche.cpp}
+
+\newpage
+\subsection*{Poker Chips}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/poker_chips/poker_chips.cpp}
+
+
+\newpage
+\section{BGL Flows}
+
+\subsection*{Coin Tossing}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/coin_tossing/coin_tossing.cpp}
+
+\newpage
+\subsection*{Shopping Trip}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/shopping/shopping.cpp}
+
+\newpage
+\subsection*{Kingdom Defence}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/kingdom_defence/kingdom_defence.cpp}
+
+\newpage
+\subsection*{A New Hope}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/a_new_hope/a_new_hope.cpp}
+
+
+\newpage
+\section{Linear/Quadratic Programing}
+
+\subsection*{What is the maximum?}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/max/max.cpp}
+
+\newpage
+\subsection*{Diet}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/diet/diet.cpp}
+
+\newpage
+\subsection*{Portfolios}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/portfolios/portfolios.cpp}
+
+\newpage
+\subsection*{Inball}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/inball/inball.cpp}
+
+\newpage
+\subsection*{Knights}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/knights/knights.cpp}
+
+
+\newpage
+\section{Proximity Structures in CGAL}
+
+\subsection*{Graypes}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/graypes/graypes.cpp}
+
+\newpage
+\subsection*{Bistro}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/bistro/bistro.cpp}
+
+\newpage
+\subsection*{H1N1}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/h1n1/h1n1.cpp}
+
+\newpage
+\subsection*{Germs}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/germs/germs.cpp}
+
+\newpage
+\subsection*{Stamps}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/stamps/stamps.cpp}
+
+
+\newpage
+\section{Advanced Flows}
+
+\subsection*{Real Estate Market}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/real_estate/real_estate.cpp}
+
+\newpage
+\subsection*{Satellites}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/satellites/satellites.cpp}
+
+\newpage
+\subsection*{Algoco\"on}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/algocoon/algocoon.cpp}
+
+\newpage
+\subsection*{Canteen}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/canteen/canteen.cpp}
+
+\newpage
+\subsection*{Casino Royale}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/casino_royale/casino_royale.cpp}
+
+
+\chapter{Exam Preparation}
+
+\subsection*{Odd Route}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/odd_route/odd_route.cpp}
+
+\newpage
+\subsection*{Light the Stage}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/light_the_stage/light_the_stage.cpp}
+
+\newpage
+\subsection*{Bonus Level}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/bonus_level/bonus_level.cpp}
+
+\newpage
+\subsection*{Sith}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/sith/sith.cpp}
+
+
+\newpage
+\subsection*{Clues}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/clues/clues.cpp}
+
+\newpage
+\subsection*{Punch}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/punch/punch.cpp}
+
+\newpage
+\subsection*{Carsharing}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/carsharing/carsharing.cpp}
+
+\newpage
+\subsection*{Planks}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/planks/planks.cpp}
+
+
+\newpage
+\subsection*{New Tiles}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/new_tiles/new_tiles.cpp}
+
+\newpage
+\subsection*{Golden Eye}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/goldeneye/goldeneye.cpp}
+
+\newpage
+\subsection*{Corbusier}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/corbusier/corbusier.cpp}
+
+\newpage
+\subsection*{Placing Knights}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/placing_knights/placing_knights.cpp}
+
+\newpage
+\subsection*{Radiation}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/radiation/radiation.cpp}
+
+\newpage
+\subsection*{The Empire Strikes Back}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/strikes_back/strikes_back.cpp}
+
+
+\newpage
+\subsection*{Bob's Burden}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/bobs_burden/bobs_burden.cpp}
+
+\newpage
+\subsection*{DHL}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/dhl/dhl.cpp}
+
+\newpage
+\subsection*{Sweepers}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/sweepers/sweepers.cpp}
+
+\newpage
+\subsection*{Portfolios revisited}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/portfolios_revisited/portfolios_revisited.cpp}
+
+\newpage
+\subsection*{The Phantom Menace}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/phantom_menace/phantom_menace.cpp}
+
+
+\newpage
+\subsection*{Cantonal Courier}
+\begin{keywords}\end{keywords}
+% \index{}
+\lstinputlisting{../exercises/courier/courier.cpp}
+
+
+\printindex
+
+\end{document}

@@ -7,7 +7,6 @@
 using namespace std;
 
 // Implementation in O(n)
-
 void deck_of_cards(){
     long n; cin >> n;
     long k; cin >> k;
@@ -22,6 +21,7 @@ void deck_of_cards(){
     long sum = values[0];
     long min_value = abs(k-sum);
 
+    // Slide a window and keep track of the minimum difference between k and the sum of values
     while (start < n) {
         if (sum <= k) {
             if (end < n-1) {
@@ -38,7 +38,6 @@ void deck_of_cards(){
     }
 
     cout << i_r << ' ' << j_r << endl;
-
 }
 
 int main() {

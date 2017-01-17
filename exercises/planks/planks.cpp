@@ -39,10 +39,8 @@ void planks() {
     }
 
     vecvec F1, F2, assigment1(4), assigment2(4);
-
     back_track(planks, assigment1, F1, 0, n/2);
     back_track(planks, assigment2, F2, n/2, n);
-
     sort(F2.begin(), F2.end());
 
     for (int idx = 0; idx < F1.size(); idx++) {

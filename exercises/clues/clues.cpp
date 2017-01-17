@@ -1,4 +1,4 @@
-\#include <vector>
+#include <vector>
 #include <map>
 #include <stack>
 
@@ -62,7 +62,8 @@ bool try_two_colors(Triangulation & trg, K::FT const & rr) {
 }
 
 void clues() {
-    int n, m, r;
+    int n, m;
+    long r;
     cin >> n >> m >> r;
     K::FT rr(r*r);
 

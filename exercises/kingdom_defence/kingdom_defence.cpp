@@ -64,8 +64,6 @@ void kingdom_defence() {
 	ReverseEdgeMap revedgemap = get(edge_reverse, G);
     // ResidualCapacityMap rescapacitymap = get(edge_residual_capacity, G);
 	EdgeAdder eaG(G, capacitymap, revedgemap);
-    // map<Edge, long> minimum_capacity;
-    // map<Edge, long> maximum_capacity;
 
     Vertex src = vertex(l, G);
     Vertex sink = vertex(l+1, G);

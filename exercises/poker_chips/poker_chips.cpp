@@ -53,7 +53,7 @@ int play(vector<vector<int> >& stacks, vector<int>& nb_chips, vector<int>& turn_
         int nb = chips_positions.size();
 
         /* Now compute all the possible combinations of extracting these chips (extract all the
-        ones with the same colos is not allways the same strategy)
+        ones with the same colos is not allways the best strategy)
         Example:
         3 3 3 2 2 2 2
         2 2 2 X X 3 X

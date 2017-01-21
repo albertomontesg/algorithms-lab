@@ -13,6 +13,7 @@ void light_pattern() {
     uint16_t q = 0x00;      // q: desired pattern
     p = n / k;
 
+    // Compute the desired pattern
     for (int i = 1; i <= k; i++) {
         q |= (x & 1)<<(k-i);
         x >>= 1;
@@ -27,13 +28,6 @@ void light_pattern() {
         }
         bulbs_state[i] = s;
     }
-
-    /*
-    Go through the blocks from left to right. Is there a recursive relationship between the number
-    of operations needed to get blocks 1..i to have the right patterns and the number of operations
-    needed to get blocks 1..i-1 to have the right patterns. If so, you could do DP. If not, why
-    not, and how could it be fixed? This should point you into the right direction.
-    */
 
     // Compute the diff state of each pattern with the desired one. The int represent the number of
     // different bulbs at each of the patterns.

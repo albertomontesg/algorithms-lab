@@ -1,7 +1,7 @@
 # include this script in your Makefile with "include helpers.mk"
 
 # File locations
-BASENAME?=avalanche # set BASENAME only if it was not set before
+BASENAME?=oh_her_majestys_secret_service # set BASENAME only if it was not set before
 EXE_LOC?=./$(BASENAME) # set EXE_LOC only if it was not set before
 
 TEST_DIR=./test

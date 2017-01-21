@@ -58,7 +58,6 @@ public:
 };
 
 
-
 void algocoon() {
     int n, m; cin >> n >> m;
 
@@ -86,7 +85,6 @@ void algocoon() {
             best_value = flow; best_src = i; best_sink = 0;
         }
     }
-
 
     flow = push_relabel_max_flow(G, best_src, best_sink);
 

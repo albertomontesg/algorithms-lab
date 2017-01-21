@@ -23,7 +23,7 @@ typedef graph_traits<DiGraph>::edge_iterator          EdgeIt;
 typedef property_map<DiGraph, edge_weight_t>::type    WeightMap;
 
 
-void buddy_selection() {
+void oh_her_majestys_secret_service() {
     int n, m, a, s, c, d;
     cin >> n >> m >> a >> s >> c >> d;
 
@@ -61,10 +61,13 @@ void buddy_selection() {
         }
     }
 
-    // binary search for the smallest t
+    // Binary search for the smallest t
     int low = 0, high = INT_MAX;
     while (low < high) {
         int mid = low + (high-low)/2;
+        // Regresent the model as a bipartite graph with all the agents as nodes in one side, and
+        // all the shelters duplicated for each possible capacity and then compute the maximum
+        // cardinality matching
         Graph GG(a + s*c);
         for (int i = 0; i < a; i++) {
             for (int j = 0; j < s; j++) {
@@ -99,6 +102,6 @@ int main() {
     ios_base::sync_with_stdio(false);
     int T; cin >> T;
     for (int t=0; t < T; t++){
-        buddy_selection();
+        oh_her_majestys_secret_service();
     }
 }

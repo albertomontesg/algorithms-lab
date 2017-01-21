@@ -37,7 +37,6 @@ void graypes(int n) {
     K::FT d = sqrt(min_dist * (100 * 100) / (2 * 2));
 
     cout << ceil_to_double(d) << endl;
-
 }
 
 

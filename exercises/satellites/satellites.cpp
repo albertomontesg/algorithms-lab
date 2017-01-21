@@ -54,8 +54,6 @@ public:
 };
 
 
-
-
 void satellites() {
     int g, s, l;
     cin >> g >> s >> l;
@@ -80,7 +78,6 @@ void satellites() {
     for (int i = g; i < g + s; i++) {
         eaG.addEdge(i, sink, 1);
     }
-
 
     push_relabel_max_flow(G, src, sink);
 

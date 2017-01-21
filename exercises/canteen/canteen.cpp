@@ -5,8 +5,6 @@
 #include <string>
 // BGL includes
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/cycle_canceling.hpp>
-#include <boost/graph/push_relabel_max_flow.hpp>
 #include <boost/graph/successive_shortest_path_nonnegative_weights.hpp>
 #include <boost/graph/find_flow_cost.hpp>
 // Namespaces
@@ -103,8 +101,6 @@ void canteen() {
     int total_s = accumulate(s.begin(), s.end(), 0);
     string text = (total_s == flow) ? "possible " : "impossible ";
     cout << text << flow << " " << cost << endl;
-
-
 }
 
 int main() {

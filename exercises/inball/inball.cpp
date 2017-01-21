@@ -37,7 +37,6 @@ void inball(int n){
     Solution s = CGAL::solve_linear_program(lp, ET());
     assert (s.solves_linear_program(lp));
 
-
     if (s.is_infeasible()) {
         cout << "none" << endl;
     } else if (s.is_unbounded()) {
@@ -46,7 +45,6 @@ void inball(int n){
         long result = -CGAL::to_double(s.objective_value());
         cout << result << endl;
     }
-
 }
 
 

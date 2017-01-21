@@ -67,12 +67,11 @@ void great_game() {
     // Create memory vectors
     vector<int> min_mem(n, -1), max_mem(n, -1);
 
+    // For each of the starting possitions, check which one has minimum movements to win the game.
     int red_moves = min_(transitions, r, n-1, min_mem, max_mem);
     int black_moves = min_(transitions, b, n-1, min_mem, max_mem);
 
-    cout << (black_moves < red_moves || ((black_moves) == red_moves && black_moves % 2 == 0)) << endl;
-
-
+    cout << (black_moves < red_moves || (black_moves == red_moves && black_moves % 2 == 0)) << endl;
 }
 
 int main() {

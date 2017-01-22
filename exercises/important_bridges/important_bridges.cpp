@@ -14,15 +14,11 @@
 
 // Namespaces
 using namespace std;
-namespace boost
-{
-  struct edge_component_t
-  {
-    enum
-    { num = 555 };
-    typedef edge_property_tag kind;
-  }
-  edge_component;
+namespace boost {
+    struct edge_component_t {
+        enum { num = 555 };
+        typedef edge_property_tag kind;
+    } edge_component;
 }
 
 using namespace boost;
@@ -32,8 +28,6 @@ typedef adjacency_list<vecS, vecS, undirectedS, no_property, property <edge_comp
 typedef graph_traits<Graph>::vertex_descriptor      Vertex;
 typedef graph_traits<Graph>::edge_descriptor        Edge;
 typedef graph_traits<Graph>::edge_iterator          EdgeIt;
-// // Property map edge -> weight
-// typedef property_map<Graph, edge_weight_t>::type    WeightMap;
 
 
 void important_bridges() {

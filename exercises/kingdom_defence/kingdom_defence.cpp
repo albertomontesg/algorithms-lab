@@ -13,18 +13,18 @@ using namespace boost;
 // BGL Graph definitions
 // =====================
 // Graph Type with nested interior edge properties for Flow Algorithms
-typedef	adjacency_list_traits<vecS, vecS, directedS> Traits;
+typedef	adjacency_list_traits<vecS, vecS, directedS> 				Traits;
 typedef adjacency_list<vecS, vecS, directedS, no_property,
 	property<edge_capacity_t, long,
 		property<edge_residual_capacity_t, long,
 			property<edge_reverse_t, Traits::edge_descriptor> > > >	Graph;
 // Interior Property Maps
-typedef	property_map<Graph, edge_capacity_t>::type		EdgeCapacityMap;
-typedef	property_map<Graph, edge_residual_capacity_t>::type	ResidualCapacityMap;
-typedef	property_map<Graph, edge_reverse_t>::type		ReverseEdgeMap;
-typedef	graph_traits<Graph>::vertex_descriptor			Vertex;
-typedef	graph_traits<Graph>::edge_descriptor			Edge;
-typedef graph_traits<Graph>::edge_iterator              EdgeIt;
+typedef	property_map<Graph, edge_capacity_t>::type					EdgeCapacityMap;
+typedef	property_map<Graph, edge_residual_capacity_t>::type			ResidualCapacityMap;
+typedef	property_map<Graph, edge_reverse_t>::type					ReverseEdgeMap;
+typedef	graph_traits<Graph>::vertex_descriptor						Vertex;
+typedef	graph_traits<Graph>::edge_descriptor						Edge;
+typedef graph_traits<Graph>::edge_iterator              			EdgeIt;
 
 
 // Custom Edge Adder Class, that holds the references
@@ -62,7 +62,6 @@ void kingdom_defence() {
     Graph G(l+2);
     EdgeCapacityMap capacitymap = get(edge_capacity, G);
 	ReverseEdgeMap revedgemap = get(edge_reverse, G);
-    // ResidualCapacityMap rescapacitymap = get(edge_residual_capacity, G);
 	EdgeAdder eaG(G, capacitymap, revedgemap);
 
     Vertex src = vertex(l, G);

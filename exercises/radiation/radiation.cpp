@@ -52,6 +52,11 @@ void radiation(){
     for (int i = 0; i < h; i++) cin >> health[i][0] >> health[i][1] >> health[i][2];
     for (int i = 0; i < t; i++) cin >> tumor[i][0] >> tumor[i][1] >> tumor[i][2];
 
+    if (h == 0 || t == 0) {
+        cout << 0 << endl;
+        return;
+    }
+
     vector<vector<vector<long> > >coefficients(h+t, vector<vector<long> >(D+1));
 
     for (int i = 0; i < (h + t); i++) {
@@ -76,10 +81,24 @@ void radiation(){
         }
     }
 
-    int upper = 1;
-    while (!solve(coefficients, h, t, upper) && upper <= D) upper *= 2;
+    // int low = 1;
+    // int upper = 1
+    // while (upper < D && !solve(coefficients, h, t, upper)) upper = min (2*upper, D);
+    //
+    // if (upper == 30)
 
-    if (upper > D) cout << "impossible" << endl;
+    int upper = 1;
+    bool solvable = solve(coefficients, h, t, upper);
+    while (upper < D && !solvable) {
+        upper *= 2;
+        upper = min(upper, D);
+        solvable = solve(coefficients, h, t, upper);
+    }
+
+    if (upper == D && !solvable) {
+        cout << "impossible" << endl;
+        return;
+    }
 
     int low = upper / 2;
     while (low + 1 != upper) {

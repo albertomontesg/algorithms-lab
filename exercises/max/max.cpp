@@ -27,7 +27,6 @@ void solve_1(int a, int b){
 
     Solution s = CGAL::solve_quadratic_program(qp, ET());
     assert (s.solves_quadratic_program(qp));
-    // cout << s << endl;
 
     if (s.is_infeasible()) {
         cout << "no" << endl;
@@ -55,7 +54,6 @@ void solve_2(int a, int b){
 
     Solution s = CGAL::solve_quadratic_program(qp, ET());
     assert (s.solves_quadratic_program(qp));
-    // cout << s << endl;
 
     if (s.is_infeasible()) {
         cout << "no" << endl;

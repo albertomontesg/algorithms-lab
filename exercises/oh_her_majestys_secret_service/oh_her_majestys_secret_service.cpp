@@ -15,7 +15,7 @@ using namespace boost;
 
 // Directed graph with integer weights on edges.
 typedef adjacency_list<vecS, vecS, undirectedS, no_property, property<edge_weight_t, int> > Graph;
-typedef adjacency_list<vecS, vecS, directedS, no_property, property<edge_weight_t, int> > DiGraph;
+typedef adjacency_list<vecS, vecS, directedS, no_property, property<edge_weight_t, int> >   DiGraph;
 typedef graph_traits<DiGraph>::vertex_descriptor      Vertex;
 typedef graph_traits<DiGraph>::edge_descriptor        Edge;
 typedef graph_traits<DiGraph>::edge_iterator          EdgeIt;

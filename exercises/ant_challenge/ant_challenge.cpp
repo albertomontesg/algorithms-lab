@@ -66,7 +66,6 @@ void graphs() {
             int weight = weightmaps[i][edge_s];
             tie(new_edge, new_success) = add_edge(j, primpredmap[j], G);
             weightmap[new_edge] = weight;
-
         }
     }
 

@@ -16,7 +16,7 @@ is cutting the starting point and take the best result).
 using namespace std;
 
 
-void compute_jedis() {
+void attack_clones() {
     long N, M; cin >> N >> M;
 
     vector<pair<int, int> > jedis(N);
@@ -99,7 +99,7 @@ int main() {
     int t; cin >> t;
 
     for (int i = 0; i < t; i++) {
-        compute_jedis();
+        attack_clones();
     }
     return 0;
 }

@@ -249,3 +249,6 @@ TSWLatexianTemp*
 
 # macOS
 .DS_Store
+
+# Editor
+.editorconfig
